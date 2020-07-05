@@ -1,4 +1,4 @@
-package dev.saljuama.demo.ksj
+package dev.saljuama.demo.nerdalert
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

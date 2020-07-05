@@ -1,4 +1,4 @@
-package dev.saljuama.demo.ksj
+package dev.saljuama.demo.nerdalert
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
