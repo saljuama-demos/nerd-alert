@@ -1,1 +1,8 @@
-
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/demo
+    username: demo
+    password: demo
+    driver-class-name: org.postgresql.Driver
+  jooq:
+    sql-dialect: postgres
