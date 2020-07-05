@@ -1,1 +1,1 @@
-rootProject.name = "kotlin-spring-jooq"
+rootProject.name = "nerd-alert"
