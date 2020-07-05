@@ -8,10 +8,5 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
       POSTGRES_DB: test
-    volumes:
-      - nerdAlertTest:/var/lib/postgresql/data
     ports:
       - "5431:5432"
-
-volumes:
-  nerdAlertTest:
