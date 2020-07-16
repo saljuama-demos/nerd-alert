@@ -54,3 +54,8 @@ tasks.withType<KotlinCompile> {
     jvmTarget = "11"
   }
 }
+
+tasks.wrapper {
+  gradleVersion = "6.5.1"
+  distributionType = Wrapper.DistributionType.ALL
+}
