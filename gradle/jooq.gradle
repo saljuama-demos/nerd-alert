@@ -44,3 +44,10 @@ jooq {
         }
     }
 }
+
+task cleanJooqSchema(type: Delete) {
+    group = 'jooq'
+    delete 'src/main/generated'
+    followSymlinks = true
+    mustRunAfter(clean)
+}

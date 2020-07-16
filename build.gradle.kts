@@ -4,6 +4,7 @@ plugins {
   id("org.springframework.boot") version "2.3.1.RELEASE"
   id("io.spring.dependency-management") version "1.0.9.RELEASE"
   id("nu.studer.jooq") version "4.2"
+  id("org.flywaydb.flyway") version "6.5.1"
   kotlin("jvm") version "1.3.72"
   kotlin("plugin.spring") version "1.3.72"
 }
@@ -13,6 +14,7 @@ version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 apply(from = "gradle/jooq.gradle")
+apply(from = "gradle/flyway.gradle")
 
 configurations {
   compileOnly {
