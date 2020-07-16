@@ -1,0 +1,10 @@
+###  CREATE NEW ACCOUNT
+
+POST http://localhost:8080/api/accounts
+Content-Type: application/json
+
+{
+  "username": "CurroRomero",
+  "email": "curro.romero@email.com",
+  "password": "super secret"
+}
