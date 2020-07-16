@@ -19,13 +19,21 @@ class AccountsRequestHandler(
     }
   }
 
+  data class NewAccountResponse(val verificationUrl: String)
+
   fun registerNewAccount(request: ServerRequest): ServerResponse {
     val newAccountRequest = request.body(NewAccountRequest::class.java)
     log.info("We've got a new account! $newAccountRequest")
 
-    return when (accountsRepository.createNewAccount(newAccountRequest.toEntity())) {
-      true -> ServerResponse.status(HttpStatus.CREATED).build()
-      false -> ServerResponse.status(500).body("Could not create the new account!")
+    return try {
+      val savedAccount = accountsRepository.createNewAccount(newAccountRequest.toEntity())
+      val username: String = savedAccount.username
+      val token: String = savedAccount.verification?.token!!
+      val responseBody = NewAccountResponse("http://localhost:8080/api/account/$username/$token")
+      ServerResponse.status(HttpStatus.CREATED).body(responseBody)
+    } catch (e: Exception) {
+      ServerResponse.status(500).body("Could not create the new account!")
     }
+
   }
 }
