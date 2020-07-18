@@ -8,7 +8,7 @@ alter table account
 
 create table account_verification
 (
-    account   varchar(50) primary key references account (username) on delete cascade,
+    username  varchar(50) primary key references account (username) on delete cascade,
     token     varchar(50) not null,
     issued_at date default now()
 );

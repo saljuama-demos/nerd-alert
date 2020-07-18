@@ -43,7 +43,7 @@ class AccountsRepository(
   private fun persistNewAccountVerification(account: AccountEntity): AccountEntity {
     val token = UUID.randomUUID().toString()
     sql
-      .insertInto(ACCOUNT_VERIFICATION, ACCOUNT_VERIFICATION.ACCOUNT, ACCOUNT_VERIFICATION.TOKEN)
+      .insertInto(ACCOUNT_VERIFICATION, ACCOUNT_VERIFICATION.USERNAME, ACCOUNT_VERIFICATION.TOKEN)
       .values(account.username, token)
       .execute()
     return account.copy(verification = AccountVerification(token))

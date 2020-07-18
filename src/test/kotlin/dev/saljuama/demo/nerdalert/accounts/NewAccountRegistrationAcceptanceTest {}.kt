@@ -45,7 +45,7 @@ internal class NewAccountRegistrationAcceptanceTest(
 
     val accountsForUserInDb = sql.selectFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq("CurroRomero")).count()
     assertEquals(1, accountsForUserInDb)
-    val accountVerificationsForUserInDB = sql.selectFrom(ACCOUNT_VERIFICATION).where(ACCOUNT_VERIFICATION.ACCOUNT.eq("CurroRomero")).count()
+    val accountVerificationsForUserInDB = sql.selectFrom(ACCOUNT_VERIFICATION).where(ACCOUNT_VERIFICATION.USERNAME.eq("CurroRomero")).count()
     assertEquals(1, accountVerificationsForUserInDB)
   }
 }
