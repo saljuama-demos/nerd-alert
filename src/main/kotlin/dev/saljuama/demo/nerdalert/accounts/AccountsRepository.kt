@@ -4,6 +4,7 @@ import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.util.*
 
@@ -25,6 +26,7 @@ class AccountsRepository(
   val sql: DSLContext
 ) {
 
+  @Transactional
   fun createNewAccount(account: AccountEntity): AccountEntity {
     val savedAccount = persistNewAccount(account)
     return persistNewAccountVerification(savedAccount)
