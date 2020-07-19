@@ -1,5 +1,6 @@
 package dev.saljuama.demo.nerdalert.accounts
 
+import arrow.core.getOrElse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -25,16 +26,14 @@ class AccountsRequestHandler(
     val newAccountRequest = request.body(NewAccountRequest::class.java)
     log.info("We've got a new account! $newAccountRequest")
 
-    return try {
-      val savedAccount = accountsRepository.createNewAccount(newAccountRequest.toEntity())
-      val username: String = savedAccount.username
-      val token: String = savedAccount.verification?.token!!
-      val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/verify/$username/$token")
-      ServerResponse.status(HttpStatus.CREATED).body(responseBody)
-    } catch (e: Exception) {
-      ServerResponse.status(500).body("Could not create the new account!")
-    }
-
+    return accountsRepository.createNewAccount(newAccountRequest.toEntity())
+      .map {
+        val username: String = it.username
+        val token: String = it.verification?.token!!
+        val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/verify/$username/$token")
+        ServerResponse.status(HttpStatus.CREATED).body(responseBody)
+      }
+      .getOrElse { ServerResponse.status(500).body("Could not create the new account!") }
   }
 
   fun verifyNewAccount(request: ServerRequest): ServerResponse {

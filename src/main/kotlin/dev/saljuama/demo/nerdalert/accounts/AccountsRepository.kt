@@ -1,5 +1,7 @@
 package dev.saljuama.demo.nerdalert.accounts
 
+import arrow.core.Either
+import arrow.fx.IO
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import org.jooq.DSLContext
@@ -29,9 +31,13 @@ class AccountsRepository(
 ) {
 
   @Transactional
-  fun createNewAccount(account: AccountEntity): AccountEntity {
-    val savedAccount = persistNewAccount(account)
-    return persistNewAccountVerification(savedAccount)
+  fun createNewAccount(account: AccountEntity): Either<Throwable, AccountEntity> {
+    return IO {
+      val savedAccount = persistNewAccount(account)
+      persistNewAccountVerification(savedAccount)
+    }
+      .attempt()
+      .unsafeRunSync()
   }
 
   private fun persistNewAccount(account: AccountEntity): AccountEntity {
