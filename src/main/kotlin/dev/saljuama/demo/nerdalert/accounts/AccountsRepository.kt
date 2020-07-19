@@ -69,7 +69,8 @@ class AccountsRepository(
   private fun findVerifiableAccountBy(username: String, token: String): Result<Record> {
     return sql.select()
       .from(ACCOUNT
-        .join(ACCOUNT_VERIFICATION).on(ACCOUNT_VERIFICATION.USERNAME.eq(ACCOUNT.USERNAME))
+        .innerJoin(ACCOUNT_VERIFICATION)
+        .on(ACCOUNT_VERIFICATION.USERNAME.eq(ACCOUNT.USERNAME))
       )
       .where(ACCOUNT.USERNAME.eq(username))
       .and(ACCOUNT_VERIFICATION.TOKEN.eq(token))

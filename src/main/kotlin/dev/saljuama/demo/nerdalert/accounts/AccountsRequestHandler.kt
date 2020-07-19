@@ -29,7 +29,7 @@ class AccountsRequestHandler(
       val savedAccount = accountsRepository.createNewAccount(newAccountRequest.toEntity())
       val username: String = savedAccount.username
       val token: String = savedAccount.verification?.token!!
-      val responseBody = NewAccountResponse("http://localhost:8080/api/account/$username/$token")
+      val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/verify/$username/$token")
       ServerResponse.status(HttpStatus.CREATED).body(responseBody)
     } catch (e: Exception) {
       ServerResponse.status(500).body("Could not create the new account!")
