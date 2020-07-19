@@ -3,6 +3,8 @@ package dev.saljuama.demo.nerdalert.accounts
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import org.jooq.DSLContext
+import org.jooq.Record
+import org.jooq.Result
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -49,6 +51,42 @@ class AccountsRepository(
       .values(account.username, token)
       .execute()
     return account.copy(verification = AccountVerification(token))
+  }
+
+  @Transactional
+  fun verifyNewAccount(username: String, token: String): Boolean {
+    val result = findVerifiableAccountBy(username, token)
+    return when {
+      result.isNotEmpty -> {
+        deleteAccountVerificationFor(username)
+        markAccountAsVerified(username)
+        true
+      }
+      else -> false
+    }
+  }
+
+  private fun findVerifiableAccountBy(username: String, token: String): Result<Record> {
+    return sql.select()
+      .from(ACCOUNT
+        .join(ACCOUNT_VERIFICATION).on(ACCOUNT_VERIFICATION.USERNAME.eq(ACCOUNT.USERNAME))
+      )
+      .where(ACCOUNT.USERNAME.eq(username))
+      .and(ACCOUNT_VERIFICATION.TOKEN.eq(token))
+      .fetch()
+  }
+
+  private fun deleteAccountVerificationFor(username: String) {
+    sql.deleteFrom(ACCOUNT_VERIFICATION)
+      .where(ACCOUNT_VERIFICATION.USERNAME.eq(username))
+      .execute()
+  }
+
+  private fun markAccountAsVerified(username: String) {
+    sql.update(ACCOUNT)
+      .set(ACCOUNT.VERIFIED, true)
+      .where(ACCOUNT.USERNAME.eq(username))
+      .execute()
   }
 
 }

@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.*
 @AutoConfigureMockMvc
 internal class NewAccountRegistrationAcceptanceTest(
   @Autowired val mockMvc: MockMvc,
-  @Autowired val sql: DSLContext
+  @Autowired val sql: DSLContext,
+  @Autowired val accounts: AccountsRepository
 ) {
 
   @AfterEach
@@ -30,7 +31,7 @@ internal class NewAccountRegistrationAcceptanceTest(
 
   @Test
   internal fun `create new account`() {
-    val response = mockMvc.post("/api/accounts") {
+    val result = mockMvc.post("/api/accounts") {
       contentType = MediaType.APPLICATION_JSON
       content = """{
           |  "username": "CurroRomero",
@@ -41,11 +42,34 @@ internal class NewAccountRegistrationAcceptanceTest(
     }.andExpect {
       status { isCreated }
     }.andReturn()
-    assertTrue(response.response.contentAsString.contains("http://localhost:8080/api/account/CurroRomero/"))
+    assertTrue(result.response.contentAsString.contains("http://localhost:8080/api/account/CurroRomero/"))
 
     val accountsForUserInDb = sql.selectFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq("CurroRomero")).count()
     assertEquals(1, accountsForUserInDb)
     val accountVerificationsForUserInDB = sql.selectFrom(ACCOUNT_VERIFICATION).where(ACCOUNT_VERIFICATION.USERNAME.eq("CurroRomero")).count()
     assertEquals(1, accountVerificationsForUserInDB)
+  }
+
+  @Test
+  internal fun `validate an account`() {
+    val username = "CurroRomero"
+    val savedAccount = accounts.createNewAccount(AccountEntity(null, username, "curro.romero@email.com", "super secret"))
+    val verificationToken = savedAccount.verification?.token!!
+
+    mockMvc.get("/api/accounts/verify/$username/$verificationToken")
+      .andExpect {
+        status { isOk }
+      }
+
+    val userValidated = sql.selectFrom(ACCOUNT)
+      .where(ACCOUNT.USERNAME.eq(username))
+      .and(ACCOUNT.VERIFIED.eq(true))
+      .count()
+    assertEquals(1, userValidated)
+
+    val verificationsPending = sql.selectFrom(ACCOUNT_VERIFICATION)
+      .where(ACCOUNT_VERIFICATION.USERNAME.eq(username))
+      .count()
+    assertEquals(0, verificationsPending)
   }
 }
