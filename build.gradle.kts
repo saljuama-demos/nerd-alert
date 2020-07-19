@@ -7,6 +7,7 @@ plugins {
   id("org.flywaydb.flyway") version "6.5.1"
   kotlin("jvm") version "1.3.72"
   kotlin("plugin.spring") version "1.3.72"
+  kotlin("kapt") version "1.3.72"
 }
 
 group = "dev.saljuama.demo"
@@ -24,6 +25,12 @@ configurations {
 
 repositories {
   mavenCentral()
+  maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
+}
+
+object Versions {
+  const val springMockk = "2.0.2"
+  const val arrow = "0.10.4"
 }
 
 dependencies {
@@ -34,16 +41,19 @@ dependencies {
   implementation("org.flywaydb:flyway-core")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+  implementation("io.arrow-kt:arrow-fx:${Versions.arrow}")
+  implementation("io.arrow-kt:arrow-syntax:${Versions.arrow}")
 
   runtimeOnly("org.postgresql:postgresql")
   jooqRuntime("org.postgresql:postgresql")
+  kapt("io.arrow-kt:arrow-meta:${Versions.arrow}")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
     exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     exclude(group = "org.mockito", module = "mockito-core")
     exclude(group = "org.mockito", module = "mockito-junit-jupiter")
   }
-  testImplementation("com.ninja-squad:springmockk:2.0.2")
+  testImplementation("com.ninja-squad:springmockk:${Versions.springMockk}")
 }
 
 tasks.withType<Test> {
