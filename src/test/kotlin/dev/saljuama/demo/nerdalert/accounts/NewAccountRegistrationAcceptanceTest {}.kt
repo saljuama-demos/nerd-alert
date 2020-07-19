@@ -1,11 +1,8 @@
 package dev.saljuama.demo.nerdalert.accounts
 
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
+import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -24,8 +21,7 @@ internal class NewAccountRegistrationAcceptanceTest(
 
   @AfterEach
   internal fun tearDown() {
-    sql.deleteFrom(ACCOUNT).execute()
-    sql.deleteFrom(ACCOUNT_VERIFICATION).execute()
+    DbTestUtils.cleanupDatabase(sql)
   }
 
   @Test
