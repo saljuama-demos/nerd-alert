@@ -40,9 +40,8 @@ class AccountsRequestHandler(
     val token = request.pathVariable("token")
     val username = request.pathVariable("username")
 
-    return when (accountsRepository.verifyNewAccount(username, token)) {
-      true -> ServerResponse.ok().build()
-      false -> ServerResponse.badRequest().build()
-    }
+    return accountsRepository.verifyNewAccount(username, token)
+      .map { ServerResponse.ok().build() }
+      .getOrElse { ServerResponse.badRequest().build() }
   }
 }
