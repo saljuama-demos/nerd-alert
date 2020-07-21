@@ -22,6 +22,8 @@ class AccountsRequestHandler(
 
   data class NewAccountResponse(val verificationUrl: String)
 
+  data class NewAccountError(val error: String = "username and/or email not available")
+
   fun registerNewAccount(request: ServerRequest): ServerResponse {
     val newAccountRequest = request.body(NewAccountRequest::class.java)
     log.info("We've got a new account! $newAccountRequest")
@@ -30,10 +32,10 @@ class AccountsRequestHandler(
       .map {
         val username: String = it.username
         val token: String = it.verification?.token!!
-        val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/verify/$username/$token")
+        val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/$username/verify/$token")
         ServerResponse.status(HttpStatus.CREATED).body(responseBody)
       }
-      .getOrElse { ServerResponse.status(500).body("Could not create the new account!") }
+      .getOrElse { ServerResponse.status(HttpStatus.BAD_REQUEST).body(NewAccountError()) }
   }
 
   fun verifyNewAccount(request: ServerRequest): ServerResponse {

@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("integration-test")
-internal class AccountsRepositoryTest(
+internal class AccountsRepositoryIntegrationTest(
   @Autowired val sql: DSLContext
 ) {
 
@@ -29,17 +29,17 @@ internal class AccountsRepositoryTest(
   }
 
   @Test
-  fun createNewAccount_usernameIsAvailable_createsTheNewAccount() {
+  internal fun `creating a new account when username is available, persists account and a generated token in DB`() {
     val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
 
     val savedAccount = accountsRepository.createNewAccount(newAccount).getOrElse { null }!!
 
     assertNotNull(savedAccount.id)
-    assertNotNull(savedAccount.verification)
+    assertNotNull(savedAccount.verification?.token)
   }
 
   @Test
-  fun createNewAccount_usernameIsInUse_doesNotCreateAnAccount() {
+  internal fun `creating a new account when username is in use, does not persist anything in DB`() {
     val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
 
     accountsRepository.createNewAccount(newAccount)
@@ -49,7 +49,7 @@ internal class AccountsRepositoryTest(
   }
 
   @Test
-  fun verifyNewAccount_withCorrectCombination_verifiesTheAccount() {
+  internal fun `verifying an account with correct username and token combination, updates account and remove verification from DB`() {
     val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
     val token = accountsRepository.createNewAccount(newAccount)
       .map { account -> account.verification?.token!! }
@@ -62,7 +62,7 @@ internal class AccountsRepositoryTest(
   }
 
   @Test
-  fun verifyNewAccount_withInvalidCombination_doesNothing() {
+  internal fun `verifying an account with incorrect username and token combination, does nothing`() {
     val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
     accountsRepository.createNewAccount(newAccount)
 

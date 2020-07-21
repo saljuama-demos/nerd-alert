@@ -13,7 +13,7 @@ class RoutesConfiguration {
   fun accountRoutes(accountsRequestHandler: AccountsRequestHandler): RouterFunction<ServerResponse> = router {
     accept(APPLICATION_JSON).nest {
       POST("/api/accounts")(accountsRequestHandler::registerNewAccount)
-      GET("/api/accounts/verify/{username}/{token}")(accountsRequestHandler::verifyNewAccount)
+      GET("/api/accounts/{username}/verify/{token}")(accountsRequestHandler::verifyNewAccount)
     }
   }
 }
