@@ -30,28 +30,23 @@ internal class AccountsRepositoryIntegrationTest(
 
   @Test
   internal fun `creating a new account when username is available, persists account and a generated token in DB`() {
-    val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
+    val savedAccount = accountsRepository.createNewAccount(newAccount())
+      .getOrElse { null }!!
 
-    val savedAccount = accountsRepository.createNewAccount(newAccount).getOrElse { null }!!
-
-    assertNotNull(savedAccount.id)
     assertNotNull(savedAccount.verification?.token)
   }
 
   @Test
   internal fun `creating a new account when username is in use, does not persist anything in DB`() {
-    val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
-
-    accountsRepository.createNewAccount(newAccount)
-    val result = accountsRepository.createNewAccount(newAccount)
+    accountsRepository.createNewAccount(newAccount())
+    val result = accountsRepository.createNewAccount(newAccount())
 
     assertTrue(result.isLeft())
   }
 
   @Test
   internal fun `verifying an account with correct username and token combination, updates account and remove verification from DB`() {
-    val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
-    val token = accountsRepository.createNewAccount(newAccount)
+    val token = accountsRepository.createNewAccount(newAccount())
       .map { account -> account.verification?.token!! }
       .getOrElse { null }!!
 
@@ -63,11 +58,12 @@ internal class AccountsRepositoryIntegrationTest(
 
   @Test
   internal fun `verifying an account with incorrect username and token combination, does nothing`() {
-    val newAccount = AccountEntity(null, "user1", "user1@email.com", "superSecret")
-    accountsRepository.createNewAccount(newAccount)
+    accountsRepository.createNewAccount(newAccount())
 
     val result = accountsRepository.verifyNewAccount("user1", "fakeToken")
 
     assertTrue(result.isLeft())
   }
+
+  private fun newAccount() = NewAccount("user1", "user1@email.com", "superSecret")
 }
