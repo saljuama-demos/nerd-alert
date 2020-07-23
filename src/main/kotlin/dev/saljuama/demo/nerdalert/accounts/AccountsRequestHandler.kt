@@ -31,7 +31,7 @@ data class NewUserProfileRequest(
 
 
 class AccountsRequestHandler(
-  val accountsRepository: AccountsRepository
+  val accountsService: AccountsService
 ) {
   val log: Logger = LoggerFactory.getLogger(AccountsRequestHandler::class.java)
 
@@ -39,7 +39,7 @@ class AccountsRequestHandler(
     val newAccountRequest = request.body(NewAccountRequest::class.java)
     log.info("We've got a new account! $newAccountRequest")
 
-    return accountsRepository.createNewAccount(newAccountRequest.toNewAccount())
+    return accountsService.createNewAccount(newAccountRequest.toNewAccount())
       .map {
         val username: String = it.username
         val token: String = it.verification?.token!!
@@ -53,7 +53,7 @@ class AccountsRequestHandler(
     val token = request.pathVariable("token")
     val username = request.pathVariable("username")
 
-    return accountsRepository.verifyNewAccount(username, token)
+    return accountsService.verifyNewAccount(username, token)
       .map { ServerResponse.ok().build() }
       .getOrElse { ServerResponse.badRequest().build() }
   }
@@ -62,7 +62,7 @@ class AccountsRequestHandler(
     val username = request.pathVariable("username")
     val newUserProfileRequest = request.body(NewUserProfileRequest::class.java)
 
-    return accountsRepository.createUserProfile(newUserProfileRequest.toInput(username))
+    return accountsService.createUserProfile(newUserProfileRequest.toInput(username))
       .map { ServerResponse.status(HttpStatus.CREATED).build() }
       .getOrHandle { error ->
         when (error) {

@@ -26,7 +26,7 @@ data class UserProfileInput(
 )
 
 @Component
-class AccountsRepository(
+class AccountsService(
   val sql: DSLContext
 ) {
 

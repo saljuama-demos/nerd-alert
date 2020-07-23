@@ -18,11 +18,11 @@ internal class AccountsRequestHandlerIntegrationTest(
   @Autowired val mockMvc: MockMvc
 ) {
 
-  @MockkBean lateinit var accountRepository: AccountsRepository
+  @MockkBean lateinit var accountService: AccountsService
 
   @Test
   internal fun `creating a new account returns 201`() {
-    every { accountRepository.createNewAccount(any()) } returns
+    every { accountService.createNewAccount(any()) } returns
       Right(Account("Pepe", "pepe@email.com", "secret", verification = AccountVerification("token")))
 
     mockMvc.post("/api/accounts") {
@@ -42,7 +42,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new account when username or email not available returns 400`() {
-    every { accountRepository.createNewAccount(any()) } returns
+    every { accountService.createNewAccount(any()) } returns
       Left(UsernameOrEmailNotAvailableException())
 
     mockMvc.post("/api/accounts") {
@@ -62,7 +62,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `validating an user returns 200`() {
-    every { accountRepository.verifyNewAccount("Pepe", "token") } returns
+    every { accountService.verifyNewAccount("Pepe", "token") } returns
       Right(Account("Pepe", "email", "pass"))
 
     mockMvc.get("/api/accounts/Pepe/verify/token")
@@ -73,7 +73,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `validating an user with invalid token returns 400`() {
-    every { accountRepository.verifyNewAccount("Pepe", "token") } returns
+    every { accountService.verifyNewAccount("Pepe", "token") } returns
       Left(InvalidVerificationTokenException())
 
     mockMvc.get("/api/accounts/Pepe/verify/token")
@@ -84,7 +84,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new user profile returns 201`() {
-    every { accountRepository.createUserProfile(any()) } returns
+    every { accountService.createUserProfile(any()) } returns
       Right(Account("Pepe", "email", "censored", profile = UserProfile("Pepe", "Romero", "secret", "http://fancy.com/img.jpg")))
 
     mockMvc.post("/api/accounts/Pepe/profile") {
@@ -120,7 +120,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new user profile with not verified account returns 400`() {
-    every { accountRepository.createUserProfile(any()) } returns Left(AccountNotVerifiedException())
+    every { accountService.createUserProfile(any()) } returns Left(AccountNotVerifiedException())
 
     mockMvc.post("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
@@ -140,7 +140,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new user profile with a non existing account returns 400`() {
-    every { accountRepository.createUserProfile(any()) } returns Left(AccountNotFoundException())
+    every { accountService.createUserProfile(any()) } returns Left(AccountNotFoundException())
 
     mockMvc.post("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
