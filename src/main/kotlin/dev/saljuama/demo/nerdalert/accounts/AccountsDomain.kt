@@ -38,7 +38,6 @@ data class UserProfile(
 
 class UsernameOrEmailNotAvailableException : Throwable()
 class InvalidVerificationException : Throwable()
-class AccountNotVerifiedException : Throwable()
 class AccountNotFoundException : Throwable()
 
 interface AccountsService {
