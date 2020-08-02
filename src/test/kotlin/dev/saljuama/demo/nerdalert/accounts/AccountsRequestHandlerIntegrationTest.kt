@@ -18,12 +18,12 @@ internal class AccountsRequestHandlerIntegrationTest(
   @Autowired val mockMvc: MockMvc
 ) {
 
-  @MockkBean lateinit var accountService: AccountsService
+  @MockkBean lateinit var accountService: AccountsTransactionalService
 
   @Test
   internal fun `creating a new account returns 201`() {
-    every { accountService.createNewAccount(any()) } returns
-      Right(Account("Pepe", "pepe@email.com", "secret", verification = AccountVerification("token")))
+    every { accountService.createAccount(NewAccount("Pepe", "pepe@email.com", "secret")) } returns
+      Right(StarterAccount("Pepe", "pepe@email.com", verification = AccountVerification("token")))
 
     mockMvc.post("/api/accounts") {
       contentType = MediaType.APPLICATION_JSON
@@ -42,8 +42,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new account when username or email not available returns 400`() {
-    every { accountService.createNewAccount(any()) } returns
-      Left(UsernameOrEmailNotAvailableException())
+    every { accountService.createAccount(any()) } returns Left(UsernameOrEmailNotAvailableException())
 
     mockMvc.post("/api/accounts") {
       contentType = MediaType.APPLICATION_JSON
@@ -62,8 +61,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `validating an user returns 200`() {
-    every { accountService.verifyNewAccount("Pepe", "token") } returns
-      Right(Account("Pepe", "email", "pass"))
+    every { accountService.verifyAccount("Pepe", "token") } returns Right(Account("Pepe", "email"))
 
     mockMvc.get("/api/accounts/Pepe/verify/token")
       .andExpect {
@@ -73,8 +71,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `validating an user with invalid token returns 400`() {
-    every { accountService.verifyNewAccount("Pepe", "token") } returns
-      Left(InvalidVerificationTokenException())
+    every { accountService.verifyAccount("Pepe", "token") } returns Left(InvalidVerificationException())
 
     mockMvc.get("/api/accounts/Pepe/verify/token")
       .andExpect {
@@ -84,8 +81,8 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new user profile returns 201`() {
-    every { accountService.createUserProfile(any()) } returns
-      Right(Account("Pepe", "email", "censored", profile = UserProfile("Pepe", "Romero", "secret", "http://fancy.com/img.jpg")))
+    every { accountService.updateProfile(any(), any()) } returns
+      Right(Account("Pepe", "email", profile = UserProfile("Pepe", "Romero", "secret", "http://fancy.com/img.jpg")))
 
     mockMvc.post("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
@@ -120,7 +117,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new user profile with not verified account returns 400`() {
-    every { accountService.createUserProfile(any()) } returns Left(AccountNotVerifiedException())
+    every { accountService.updateProfile(any(), any()) } returns Left(AccountNotFoundException())
 
     mockMvc.post("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
@@ -134,37 +131,8 @@ internal class AccountsRequestHandlerIntegrationTest(
           """
     }.andExpect {
       status { isBadRequest }
-      jsonPath("$.error") { value("account not verified") }
+      jsonPath("$.error") { value("account not found or not verified") }
     }
   }
 
-  @Test
-  internal fun `creating a new user profile with a non existing account returns 400`() {
-    every { accountService.createUserProfile(any()) } returns Left(AccountNotFoundException())
-
-    mockMvc.post("/api/accounts/Pepe/profile") {
-      contentType = MediaType.APPLICATION_JSON
-      content = """
-          {
-            "firstName": "Pepe",
-            "lastName": "Romero",
-            "description": "secret",
-            "imageUrl": "http://fancy.com/img.jpg"
-          }
-          """
-    }.andExpect {
-      status { isBadRequest }
-      jsonPath("$.error") { value("account not found") }
-    }
-  }
-
-//  @Test
-//  internal fun `updating an user profile with required information, returns OK`() {
-//    TODO("not implemented")
-//  }
-//
-//  @Test
-//  internal fun `updating an user profile with missing required fields, returns Bad Request`() {
-//    TODO("not implemented")
-//  }
 }

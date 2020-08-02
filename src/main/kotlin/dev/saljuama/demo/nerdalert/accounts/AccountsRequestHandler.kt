@@ -8,14 +8,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 
-data class NewAccountRequest(
-  val username: String,
-  val email: String,
-  val password: String
-) {
-  fun toNewAccount() = NewAccount(username, email, password)
-}
-
 data class NewAccountResponse(val verificationUrl: String)
 
 data class ErrorResponse(val error: String)
@@ -26,7 +18,7 @@ data class NewUserProfileRequest(
   val description: String?,
   val imageUrl: String?
 ) {
-  fun toInput(username: String) = UserProfileInput(username, firstName, lastName, description, imageUrl)
+  fun toInput() = UserProfile(firstName, lastName, description, imageUrl)
 }
 
 
@@ -36,24 +28,24 @@ class AccountsRequestHandler(
   val log: Logger = LoggerFactory.getLogger(AccountsRequestHandler::class.java)
 
   fun registerNewAccount(request: ServerRequest): ServerResponse {
-    val newAccountRequest = request.body(NewAccountRequest::class.java)
+    val newAccountRequest = request.body(NewAccount::class.java)
     log.info("We've got a new account! $newAccountRequest")
 
-    return accountsService.createNewAccount(newAccountRequest.toNewAccount())
+    return accountsService.createAccount(newAccountRequest)
       .map {
         val username: String = it.username
-        val token: String = it.verification?.token!!
+        val token: String = it.verification.token
         val responseBody = NewAccountResponse("http://localhost:8080/api/accounts/$username/verify/$token")
         ServerResponse.status(HttpStatus.CREATED).body(responseBody)
       }
       .getOrElse { ServerResponse.status(HttpStatus.BAD_REQUEST).body(ErrorResponse("username and/or email not available")) }
   }
 
-  fun verifyNewAccount(request: ServerRequest): ServerResponse {
+  fun verifyStarterAccount(request: ServerRequest): ServerResponse {
     val token = request.pathVariable("token")
     val username = request.pathVariable("username")
 
-    return accountsService.verifyNewAccount(username, token)
+    return accountsService.verifyAccount(username, token)
       .map { ServerResponse.ok().build() }
       .getOrElse { ServerResponse.badRequest().build() }
   }
@@ -62,12 +54,11 @@ class AccountsRequestHandler(
     val username = request.pathVariable("username")
     val newUserProfileRequest = request.body(NewUserProfileRequest::class.java)
 
-    return accountsService.createUserProfile(newUserProfileRequest.toInput(username))
+    return accountsService.updateProfile(username, newUserProfileRequest.toInput())
       .map { ServerResponse.status(HttpStatus.CREATED).build() }
       .getOrHandle { error ->
         when (error) {
-          is AccountNotVerifiedException -> ServerResponse.badRequest().body(ErrorResponse("account not verified"))
-          is AccountNotFoundException -> ServerResponse.badRequest().body(ErrorResponse("account not found"))
+          is AccountNotFoundException -> ServerResponse.badRequest().body(ErrorResponse("account not found or not verified"))
           else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("unknown error"))
         }
       }

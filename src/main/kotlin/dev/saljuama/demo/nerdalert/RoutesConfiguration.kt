@@ -11,14 +11,17 @@ import org.springframework.web.servlet.function.*
 class RoutesConfiguration {
 
   @Bean
-  fun accountsRequestHandler(accountsService: AccountsService) = AccountsRequestHandler(accountsService)
+  fun accountsRequestHandler(accountsService: AccountsService): AccountsRequestHandler =
+    AccountsRequestHandler(accountsService)
 
   @Bean
-  fun accountsRoutes(accountsRequestHandler: AccountsRequestHandler): RouterFunction<ServerResponse> = router {
-    accept(APPLICATION_JSON).nest {
-      POST("/api/accounts")(accountsRequestHandler::registerNewAccount)
-      GET("/api/accounts/{username}/verify/{token}")(accountsRequestHandler::verifyNewAccount)
-      POST("/api/accounts/{username}/profile")(accountsRequestHandler::createProfile)
+  fun accountsRoutes(accountsRequestHandler: AccountsRequestHandler): RouterFunction<ServerResponse> =
+    router {
+      accept(APPLICATION_JSON).nest {
+        POST("/api/accounts")(accountsRequestHandler::registerNewAccount)
+        GET("/api/accounts/{username}/verify/{token}")(accountsRequestHandler::verifyStarterAccount)
+        POST("/api/accounts/{username}/profile")(accountsRequestHandler::createProfile)
+      }
     }
-  }
+
 }

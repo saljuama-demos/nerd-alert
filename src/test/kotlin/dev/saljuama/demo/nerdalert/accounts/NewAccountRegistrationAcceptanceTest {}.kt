@@ -21,7 +21,7 @@ internal class NewAccountRegistrationAcceptanceTest(
 
   @AfterEach
   internal fun tearDown() {
-    DbTestUtils.cleanupDatabase(sql)
+    DbTestUtils.wipeDatabase(sql)
   }
 
   @Test
