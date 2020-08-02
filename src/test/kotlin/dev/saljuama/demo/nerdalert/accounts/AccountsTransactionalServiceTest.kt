@@ -30,7 +30,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `create a new account returns a starter account with a verification token`() {
+  internal fun `create a new account returns a starter account with a verification token`() {
     val newAccount = newAccount()
     every { repository.saveAccount(newAccount) } returns IO { starterAccount() }
 
@@ -41,7 +41,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `create a new account when username and-or email are already in use returns an exception`() {
+  internal fun `create a new account when username and-or email are already in use returns an exception`() {
     val newAccount = newAccount()
     every { repository.saveAccount(newAccount) } returns IO { throw UsernameOrEmailNotAvailableException() }
 
@@ -51,7 +51,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `verifying an account when is an starter account returns the verified account without user profile`() {
+  internal fun `verifying an account when is an starter account returns the verified account without user profile`() {
     val starterAccount = starterAccount()
     every { repository.findVerifiableAccount(username) } returns IO { starterAccount }
     every { repository.verifyAccount(starterAccount) } returns IO.unit
@@ -64,7 +64,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `verifying an account with an invalid token returns an exception`() {
+  internal fun `verifying an account with an invalid token returns an exception`() {
     every { repository.findVerifiableAccount(username) } returns IO { starterAccount() }
 
     val result = service.verifyAccount(username, "invalid-token")
@@ -73,7 +73,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `verifying an account that does not exist returns an error`() {
+  internal fun `verifying an account that does not exist returns an error`() {
     every { repository.findVerifiableAccount(username) } returns IO { throw AccountNotFoundException() }
 
     val result = service.verifyAccount(username, verificationToken)
@@ -82,7 +82,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `updating a profile for an existing account returns the account with the updated profile`() {
+  internal fun `updating a profile for an existing account returns the account with the updated profile`() {
     every { repository.findVerifiedAccount(username) } returns IO { account() }
     every { repository.updateProfile(any()) } returns IO.unit
 
@@ -94,7 +94,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `updating a profile for a non-existing or non-validated account returns an error`() {
+  internal fun `updating a profile for a non-existing or non-validated account returns an error`() {
     every { repository.findVerifiedAccount(username) } returns IO { throw AccountNotFoundException() }
 
     val result = service.updateProfile(username, userProfile())
@@ -103,7 +103,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `delete an account that exists succeeds`() {
+  internal fun `delete an account that exists succeeds`() {
     every { repository.deleteAccount(username) } returns IO.unit
 
     val result = service.deleteAccount(username)
@@ -112,7 +112,7 @@ internal class AccountsTransactionalServiceTest {
   }
 
   @Test
-  fun `delete a non existing account returns an error`() {
+  internal fun `delete a non existing account returns an error`() {
     every { repository.deleteAccount(username) } returns IO { throw AccountNotFoundException() }
 
     val result = service.deleteAccount(username)
