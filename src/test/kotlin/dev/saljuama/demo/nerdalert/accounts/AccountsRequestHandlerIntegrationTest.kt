@@ -135,4 +135,36 @@ internal class AccountsRequestHandlerIntegrationTest(
     }
   }
 
+  @Test
+  internal fun `listing all the accounts when no accounts available returns 404`() {
+    every { accountService.listAllAccounts() } returns Left(AccountNotFoundException())
+
+    mockMvc.get("/api/accounts")
+      .andExpect {
+        status { isNotFound }
+      }
+  }
+
+  @Test
+  internal fun `listing all the accounts when accounts are found return 200`() {
+    every { accountService.listAllAccounts() } returns Right(listOf(
+      Account("user1", "email1"),
+      Account("user2", "email2"),
+      Account("user3", "email3")
+    ))
+
+    mockMvc.get("/api/accounts")
+      .andExpect {
+        status { isOk }
+        content {
+          json("""
+            [
+              {"username":"user1","descriptionLink":"http://localhost:8080/api/accounts/user1"},
+              {"username":"user2","descriptionLink":"http://localhost:8080/api/accounts/user2"},
+              {"username":"user3","descriptionLink":"http://localhost:8080/api/accounts/user3"}
+            ]
+            """)
+        }
+      }
+  }
 }

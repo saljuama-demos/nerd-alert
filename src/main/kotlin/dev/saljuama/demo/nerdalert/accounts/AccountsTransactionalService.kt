@@ -58,4 +58,8 @@ class AccountsTransactionalService(
       .unsafeRunSync()
   }
 
+  override fun listAllAccounts(): Either<Throwable, List<Account>> {
+    TODO("not implemented")
+  }
+
 }

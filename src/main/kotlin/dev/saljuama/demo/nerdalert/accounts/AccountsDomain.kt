@@ -45,6 +45,7 @@ interface AccountsService {
   fun verifyAccount(username: String, token: String): Either<Throwable, Account>
   fun updateProfile(username: String, profile: UserProfile): Either<Throwable, Account>
   fun deleteAccount(username: String): Either<Throwable, Unit>
+  fun listAllAccounts(): Either<Throwable, List<Account>>
 }
 
 interface AccountsRepository {

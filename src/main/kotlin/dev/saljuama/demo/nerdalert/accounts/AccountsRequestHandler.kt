@@ -10,6 +10,8 @@ import org.springframework.web.servlet.function.ServerResponse
 
 data class NewAccountResponse(val verificationUrl: String)
 
+data class AccountSummary(val username: String, val descriptionLink: String)
+
 data class ErrorResponse(val error: String)
 
 data class NewUserProfileRequest(
@@ -60,6 +62,18 @@ class AccountsRequestHandler(
         when (error) {
           is AccountNotFoundException -> ServerResponse.badRequest().body(ErrorResponse("account not found or not verified"))
           else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("unknown error"))
+        }
+      }
+  }
+
+  fun listAccounts(request: ServerRequest): ServerResponse {
+    return accountsService.listAllAccounts()
+      .map { accounts -> accounts.map { account -> AccountSummary(account.username, "http://localhost:8080/api/accounts/${account.username}") } }
+      .map { accounts -> ServerResponse.ok().body(accounts) }
+      .getOrHandle { error ->
+        when (error) {
+          is AccountNotFoundException -> ServerResponse.notFound().build()
+          else -> ServerResponse.status(500).build()
         }
       }
   }
