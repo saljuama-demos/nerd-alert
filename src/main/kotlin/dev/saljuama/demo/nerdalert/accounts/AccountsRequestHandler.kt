@@ -27,7 +27,7 @@ data class NewUserProfileRequest(
 class AccountsRequestHandler(
   val accountsService: AccountsService
 ) {
-  val log: Logger = LoggerFactory.getLogger(AccountsRequestHandler::class.java)
+  private val log: Logger = LoggerFactory.getLogger(AccountsRequestHandler::class.java)
 
   fun registerNewAccount(request: ServerRequest): ServerResponse {
     val newAccountRequest = request.body(NewAccount::class.java)
@@ -52,7 +52,7 @@ class AccountsRequestHandler(
       .getOrElse { ServerResponse.badRequest().build() }
   }
 
-  fun createProfile(request: ServerRequest): ServerResponse {
+  fun upsertProfile(request: ServerRequest): ServerResponse {
     val username = request.pathVariable("username")
     val newUserProfileRequest = request.body(NewUserProfileRequest::class.java)
 
