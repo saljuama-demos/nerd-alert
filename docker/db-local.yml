@@ -2,6 +2,7 @@ version: '3.7'
 services:
 
   database-local:
+    container_name: 'nerdalert-db'
     image: postgres:12.3
     restart: always
     environment:
