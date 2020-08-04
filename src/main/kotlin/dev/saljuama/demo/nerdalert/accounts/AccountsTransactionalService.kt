@@ -6,14 +6,6 @@ import arrow.fx.extensions.io.monad.flatTap
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
-data class UserProfileInput(
-  val username: String,
-  val firstName: String,
-  val lastName: String?,
-  val description: String?,
-  val imageUrl: String?
-)
-
 @Component
 class AccountsTransactionalService(
   val repository: AccountsRepository
@@ -59,6 +51,10 @@ class AccountsTransactionalService(
   }
 
   override fun listAllAccounts(): Either<Throwable, List<Account>> {
+    TODO("not implemented")
+  }
+
+  override fun viewAccountDetails(username: String): Either<Throwable, Account> {
     TODO("not implemented")
   }
 

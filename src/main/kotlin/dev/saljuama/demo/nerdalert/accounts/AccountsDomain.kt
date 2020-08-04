@@ -46,6 +46,7 @@ interface AccountsService {
   fun updateProfile(username: String, profile: UserProfile): Either<Throwable, Account>
   fun deleteAccount(username: String): Either<Throwable, Unit>
   fun listAllAccounts(): Either<Throwable, List<Account>>
+  fun viewAccountDetails(username: String): Either<Throwable, Account>
 }
 
 interface AccountsRepository {

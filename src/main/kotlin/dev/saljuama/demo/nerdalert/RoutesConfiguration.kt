@@ -20,7 +20,7 @@ class RoutesConfiguration {
       accept(APPLICATION_JSON).nest {
         GET("/api/accounts")(accountsRequestHandler::listAccounts)
         POST("/api/accounts")(accountsRequestHandler::registerNewAccount)
-        //GET("/api/accounts/{username}")(accountsRequestHandler::viewAccountDetails)
+        GET("/api/accounts/{username}")(accountsRequestHandler::viewAccountDetails)
         GET("/api/accounts/{username}/verify/{token}")(accountsRequestHandler::verifyStarterAccount)
         POST("/api/accounts/{username}/profile")(accountsRequestHandler::createProfile)
         //PUT("/api/accounts/{username}/profile")(accountsRequestHandler::updateProfile)
