@@ -1,5 +1,6 @@
 package dev.saljuama.demo.nerdalert.accounts
 
+import dev.saljuama.demo.nerdalert.accounts.registration.*
 import java.time.LocalDate
 
 object AccountsFixtures {

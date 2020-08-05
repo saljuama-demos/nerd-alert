@@ -1,6 +1,7 @@
 package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.fx.IO
+import dev.saljuama.demo.nerdalert.accounts.registration.*
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
 import dev.saljuama.demos.nerdalert.tables.Account.ACCOUNT

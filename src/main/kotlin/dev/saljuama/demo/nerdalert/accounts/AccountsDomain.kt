@@ -2,25 +2,9 @@ package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.Either
 import arrow.fx.IO
+import dev.saljuama.demo.nerdalert.accounts.registration.NewAccount
+import dev.saljuama.demo.nerdalert.accounts.registration.StarterAccount
 import java.time.LocalDate
-import java.util.*
-
-data class NewAccount(
-  val username: String,
-  val email: String,
-  val password: String
-)
-
-data class StarterAccount(
-  val username: String,
-  val email: String,
-  val registered: LocalDate = LocalDate.now(),
-  val verification: AccountVerification = AccountVerification()
-)
-
-data class AccountVerification(
-  val token: String = UUID.randomUUID().toString()
-)
 
 data class Account(
   val username: String,
@@ -36,8 +20,6 @@ data class UserProfile(
   val imageUrl: String? = null
 )
 
-class UsernameOrEmailNotAvailableException : Throwable()
-class InvalidVerificationException : Throwable()
 class AccountNotFoundException : Throwable()
 
 interface AccountsService {

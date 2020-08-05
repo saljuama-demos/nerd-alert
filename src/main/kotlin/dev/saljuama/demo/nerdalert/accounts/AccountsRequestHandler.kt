@@ -2,6 +2,7 @@ package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.getOrElse
 import arrow.core.getOrHandle
+import dev.saljuama.demo.nerdalert.accounts.registration.NewAccount
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -27,7 +28,7 @@ data class NewUserProfileRequest(
 class AccountsRequestHandler(
   val accountsService: AccountsService
 ) {
-  private val log: Logger = LoggerFactory.getLogger(AccountsRequestHandler::class.java)
+  private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
   fun registerNewAccount(request: ServerRequest): ServerResponse {
     val newAccountRequest = request.body(NewAccount::class.java)

@@ -7,6 +7,7 @@ import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.starterAccount
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.userProfile
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.username
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.verificationToken
+import dev.saljuama.demo.nerdalert.accounts.registration.UsernameOrEmailNotAvailableException
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

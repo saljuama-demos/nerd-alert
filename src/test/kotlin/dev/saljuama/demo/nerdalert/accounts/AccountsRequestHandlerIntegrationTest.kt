@@ -5,6 +5,7 @@ import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
 import dev.saljuama.demo.nerdalert.RoutesConfiguration
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.accountWithProfile
+import dev.saljuama.demo.nerdalert.accounts.registration.*
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

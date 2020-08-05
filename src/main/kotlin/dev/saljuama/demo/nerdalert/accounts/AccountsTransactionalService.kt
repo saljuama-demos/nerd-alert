@@ -3,6 +3,7 @@ package dev.saljuama.demo.nerdalert.accounts
 import arrow.core.Either
 import arrow.fx.extensions.io.async.effectMap
 import arrow.fx.extensions.io.monad.flatTap
+import dev.saljuama.demo.nerdalert.accounts.registration.*
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
