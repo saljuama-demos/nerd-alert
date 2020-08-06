@@ -8,21 +8,22 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.*
 
 @Configuration
-class RoutesConfiguration {
+class Routers {
 
   @Bean
-  fun accountsRoutes(
+  fun accountsRouter(
     accountRegistrationRequestHandler: AccountRegistrationRequestHandler,
     accountsRequestHandler: AccountsRequestHandler
-  ): RouterFunction<ServerResponse> =
-    router {
+  ): RouterFunction<ServerResponse> = router {
+    path("/api/accounts").nest {
+      GET("/")(accountsRequestHandler::listAccounts)
+      GET("/{username}")(accountsRequestHandler::viewAccountDetails)
+      GET("/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
       accept(APPLICATION_JSON).nest {
-        GET("/api/accounts")(accountsRequestHandler::listAccounts)
-        POST("/api/accounts")(accountRegistrationRequestHandler::registerNewAccount)
-        GET("/api/accounts/{username}")(accountsRequestHandler::viewAccountDetails)
-        GET("/api/accounts/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
-        PUT("/api/accounts/{username}/profile")(accountsRequestHandler::updateProfile)
+        POST("/")(accountRegistrationRequestHandler::registerNewAccount)
+        PUT("/{username}/profile")(accountsRequestHandler::updateProfile)
       }
     }
+  }
 
 }

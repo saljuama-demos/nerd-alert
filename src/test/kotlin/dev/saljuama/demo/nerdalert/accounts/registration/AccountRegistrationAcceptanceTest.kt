@@ -12,12 +12,12 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.*
 
 @SpringBootTest
-@ActiveProfiles("integration-test")
 @AutoConfigureMockMvc
-internal class NewAccountRegistrationAcceptanceTest(
-  @Autowired val mockMvc: MockMvc,
-  @Autowired val sql: DSLContext
-) {
+@ActiveProfiles("integration-test")
+internal class AccountRegistrationAcceptanceTest {
+
+  @Autowired private lateinit var mockMvc: MockMvc
+  @Autowired private lateinit var sql: DSLContext
 
   @AfterEach
   internal fun tearDown() {
@@ -39,13 +39,15 @@ internal class NewAccountRegistrationAcceptanceTest(
       status { isCreated }
     }.andReturn()
 
-    val verificationUrl = result.response.contentAsString
-      .replace("""{"verificationUrl":"http://localhost:8080""", "")
-      .replace("\"}", "")
-
-    mockMvc.get(verificationUrl)
+    mockMvc.get(extractVerificationRelativeUrl(result))
       .andExpect {
         status { isOk }
       }
+  }
+
+  private fun extractVerificationRelativeUrl(result: MvcResult): String {
+    return result.response.contentAsString
+      .replace("""{"verificationUrl":"http://localhost:8080""", "")
+      .replace("\"}", "")
   }
 }

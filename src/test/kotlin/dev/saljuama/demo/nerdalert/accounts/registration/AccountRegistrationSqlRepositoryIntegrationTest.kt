@@ -14,10 +14,10 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("integration-test")
-internal class AccountRegistrationSqlRepositoryIntegrationTest(
-  @Autowired val sql: DSLContext,
-  @Autowired val repository: AccountRegistrationSqlRepository
-) {
+internal class AccountRegistrationSqlRepositoryIntegrationTest {
+
+  @Autowired private lateinit var sql: DSLContext
+  @Autowired private lateinit var repository: AccountRegistrationRepository
 
   @AfterEach
   fun tearDown() {

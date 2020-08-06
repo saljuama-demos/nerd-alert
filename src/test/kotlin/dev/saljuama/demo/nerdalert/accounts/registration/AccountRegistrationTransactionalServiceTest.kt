@@ -15,8 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(MockKExtension::class)
 internal class AccountRegistrationTransactionalServiceTest {
 
-  @MockK
-  private lateinit var repository: AccountRegistrationRepository
+  @MockK private lateinit var repository: AccountRegistrationRepository
   private lateinit var service: AccountRegistrationService
 
   @BeforeEach

@@ -10,16 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
-internal class AccountsRequestHandlerIntegrationTest(
-  @Autowired val mockMvc: MockMvc
-) {
+@ActiveProfiles("integration-test")
+internal class AccountsRequestHandlerIntegrationTest {
 
-  @MockkBean
-  private lateinit var accountService: AccountsTransactionalService
+  @MockkBean private lateinit var accountService: AccountsService
+  @Autowired private lateinit var mockMvc: MockMvc
 
   @Test
   internal fun `creating a new user profile returns 201`() {
