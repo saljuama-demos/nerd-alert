@@ -53,15 +53,4 @@ class AccountsRequestHandler(
       }
   }
 
-  fun viewAccountDetails(request: ServerRequest): ServerResponse {
-    val username = request.pathVariable("username")
-    return accountsService.viewAccountDetails(username)
-      .map { account -> ServerResponse.ok().body(account) }
-      .getOrHandle { error ->
-        when (error) {
-          is AccountNotFoundException -> ServerResponse.notFound().build()
-          else -> ServerResponse.status(500).build()
-        }
-      }
-  }
 }

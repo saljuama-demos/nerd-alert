@@ -3,7 +3,6 @@ package dev.saljuama.demo.nerdalert.accounts
 import arrow.core.Left
 import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.accountWithProfile
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -110,24 +109,4 @@ internal class AccountsRequestHandlerIntegrationTest {
       }
   }
 
-  @Test
-  internal fun `viewing the details of an account that exists return 200`() {
-    every { accountService.viewAccountDetails("user1") } returns Right(accountWithProfile())
-
-    mockMvc.get("/api/accounts/user1")
-      .andExpect {
-        status { isOk }
-        jsonPath("$.profile.firstName") { value("User") }
-      }
-  }
-
-  @Test
-  internal fun `viewing the details of a non-existing account returns 404`() {
-    every { accountService.viewAccountDetails("user1") } returns Left(AccountNotFoundException())
-
-    mockMvc.get("/api/accounts/user1")
-      .andExpect {
-        status { isNotFound }
-      }
-  }
 }
