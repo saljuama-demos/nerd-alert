@@ -1,4 +1,4 @@
-package dev.saljuama.demo.nerdalert.accounts
+package dev.saljuama.demo.nerdalert.accounts.registration
 
 import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import org.jooq.DSLContext
