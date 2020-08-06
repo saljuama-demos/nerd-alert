@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "2.3.1.RELEASE"
+  id("org.springframework.boot") version "2.3.2.RELEASE"
   id("io.spring.dependency-management") version "1.0.9.RELEASE"
   id("nu.studer.jooq") version "4.2"
   id("org.flywaydb.flyway") version "6.5.1"
@@ -31,13 +31,16 @@ repositories {
 object Versions {
   const val springMockk = "2.0.2"
   const val arrow = "0.10.4"
+  const val jjwt = "0.11.2"
 }
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-actuator")
+  implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+  implementation("io.jsonwebtoken:jjwt-root:${Versions.jjwt}")
   implementation("org.flywaydb:flyway-core")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
@@ -53,6 +56,7 @@ dependencies {
     exclude(group = "org.mockito", module = "mockito-core")
     exclude(group = "org.mockito", module = "mockito-junit-jupiter")
   }
+  testImplementation("org.springframework.security:spring-security-test")
   testImplementation("com.ninja-squad:springmockk:${Versions.springMockk}")
 }
 

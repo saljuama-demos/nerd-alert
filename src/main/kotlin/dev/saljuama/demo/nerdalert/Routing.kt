@@ -8,7 +8,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.servlet.function.*
 
 @Configuration
-class Routers {
+class Routing {
 
   @Bean
   fun accountsRouter(
