@@ -8,7 +8,7 @@ data class Account(
   val username: String,
   val email: String,
   val registered: LocalDate = LocalDate.now(),
-  val profile: UserProfile? = null
+  val profile: UserProfile = UserProfile(username)
 )
 
 data class UserProfile(

@@ -16,7 +16,7 @@ object AccountsFixtures {
 
   fun newAccount(): NewAccount = NewAccount(username, email, password)
   fun starterAccount(): StarterAccount = StarterAccount(username, email, registeredAt, AccountVerification(verificationToken))
-  fun account(): Account = Account(username, email, registeredAt, null)
-  fun userProfile() = UserProfile(firstName, lastName, description, imageUrl)
+  fun account(): Account = Account(username, email, registeredAt, UserProfile(username))
+  fun userProfile(): UserProfile = UserProfile(firstName, lastName, description, imageUrl)
   fun accountWithProfile(): Account = account().copy(profile = userProfile())
 }

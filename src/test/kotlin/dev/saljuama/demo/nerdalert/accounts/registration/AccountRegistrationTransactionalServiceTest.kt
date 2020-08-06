@@ -46,7 +46,7 @@ internal class AccountRegistrationTransactionalServiceTest {
   }
 
   @Test
-  internal fun `verifying an account when is an starter account returns the verified account without user profile`() {
+  internal fun `verifying an account when is an starter account returns the verified account with default profile`() {
     val starterAccount = AccountsFixtures.starterAccount()
     every { repository.findVerifiableAccount(AccountsFixtures.username) } returns IO { starterAccount }
     every { repository.verifyAccount(starterAccount) } returns IO.unit
@@ -54,7 +54,7 @@ internal class AccountRegistrationTransactionalServiceTest {
     val result = service.verifyAccount(AccountsFixtures.username, AccountsFixtures.verificationToken)
 
     assertTrue(result.isRight())
-    result.map { account -> assertNull(account.profile) }
+    result.map { account -> assertEquals(account.username, account.profile.firstName) }
     verify { repository.verifyAccount(starterAccount) }
   }
 

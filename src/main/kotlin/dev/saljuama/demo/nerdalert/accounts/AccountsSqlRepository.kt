@@ -31,16 +31,16 @@ class AccountsSqlRepository(
     }
   }
 
-  private fun parseUserProfile(result: Record): UserProfile? = when {
-    result.getValue(USER_PROFILE.FIRST_NAME) != null -> {
+  private fun parseUserProfile(result: Record): UserProfile = when {
+    result.getValue(USER_PROFILE.FIRST_NAME) != null ->
       UserProfile(
         result.getValue(USER_PROFILE.FIRST_NAME),
         result.getValue(USER_PROFILE.LAST_NAME),
         result.getValue(USER_PROFILE.DESCRIPTION),
         result.getValue(USER_PROFILE.IMAGE_URL)
       )
-    }
-    else -> null
+    else ->
+      UserProfile(result.getValue(ACCOUNT.USERNAME))
   }
 
   override fun updateProfile(account: Account): IO<Unit> {
