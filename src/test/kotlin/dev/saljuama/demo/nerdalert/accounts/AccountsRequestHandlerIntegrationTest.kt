@@ -26,7 +26,7 @@ internal class AccountsRequestHandlerIntegrationTest(
     every { accountService.updateProfile(any(), any()) } returns
       Right(Account("Pepe", "email", profile = UserProfile("Pepe", "Romero", "secret", "http://fancy.com/img.jpg")))
 
-    mockMvc.post("/api/accounts/Pepe/profile") {
+    mockMvc.put("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
       content = """
           {
@@ -43,7 +43,7 @@ internal class AccountsRequestHandlerIntegrationTest(
 
   @Test
   internal fun `creating a new account with missing required fields returns 400`() {
-    mockMvc.post("/api/accounts/Pepe/profile") {
+    mockMvc.put("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
       content = """
           {
@@ -61,7 +61,7 @@ internal class AccountsRequestHandlerIntegrationTest(
   internal fun `creating a new user profile with not verified account returns 400`() {
     every { accountService.updateProfile(any(), any()) } returns Left(AccountNotFoundException())
 
-    mockMvc.post("/api/accounts/Pepe/profile") {
+    mockMvc.put("/api/accounts/Pepe/profile") {
       contentType = MediaType.APPLICATION_JSON
       content = """
           {

@@ -27,7 +27,7 @@ class AccountsRequestHandler(
 ) {
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
-  fun upsertProfile(request: ServerRequest): ServerResponse {
+  fun updateProfile(request: ServerRequest): ServerResponse {
     val username = request.pathVariable("username")
     val newUserProfileRequest = request.body(NewUserProfileRequest::class.java)
 

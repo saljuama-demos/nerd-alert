@@ -21,7 +21,7 @@ class RoutesConfiguration {
         POST("/api/accounts")(accountRegistrationRequestHandler::registerNewAccount)
         GET("/api/accounts/{username}")(accountsRequestHandler::viewAccountDetails)
         GET("/api/accounts/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
-        POST("/api/accounts/{username}/profile")(accountsRequestHandler::upsertProfile)
+        PUT("/api/accounts/{username}/profile")(accountsRequestHandler::updateProfile)
       }
     }
 
