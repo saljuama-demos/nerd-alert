@@ -23,7 +23,8 @@ internal class ProfilesRequestHandlerIntegrationTest {
 
   @Test
   internal fun `viewing profile details returns 200 and the values`() {
-    every { profilesService.findProfile("Pepe") } returns Right(defaultProfile().copy(username = "Pepe"))
+    every { profilesService.findProfile("Pepe") } returns
+      Right(defaultProfile().copy(username = "Pepe", avatar = "http://avatar.com/img.jpg"))
 
     mockMvc.get("/api/profiles/Pepe")
       .andExpect {
@@ -34,7 +35,7 @@ internal class ProfilesRequestHandlerIntegrationTest {
           | "firstName": "",
           | "lastName": "",
           | "description": "",
-          | "avatar": "https://avataaars.io/?avatarStyle=Circle"
+          | "avatar": "http://avatar.com/img.jpg"
           |}""".trimMargin())
         }
       }

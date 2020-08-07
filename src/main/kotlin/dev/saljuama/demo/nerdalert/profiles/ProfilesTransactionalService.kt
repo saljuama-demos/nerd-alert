@@ -1,13 +1,23 @@
 package dev.saljuama.demo.nerdalert.profiles
 
-import arrow.core.Either
+import arrow.core.*
 import org.springframework.stereotype.Component
 
 @Component
-class ProfilesTransactionalService : ProfileService {
+class ProfilesTransactionalService(
+  private val repository: ProfileRepository
+) : ProfileService {
 
   override fun findProfile(username: String): Either<Throwable, Profile> {
-    TODO("not implemented")
+    return repository.findProfile(username)
+      .attempt()
+      .unsafeRunSync()
+      .handleErrorWith { error ->
+        when (error) {
+          is ProfileNotInitializedException -> Right(Profile(username))
+          else -> Left(error)
+        }
+      }
   }
 
 }
