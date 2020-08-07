@@ -29,9 +29,4 @@ class AccountsTransactionalService(
   override fun listAllAccounts(): Either<Throwable, List<Account>> {
     TODO("not implemented")
   }
-
-  override fun viewAccountDetails(username: String): Either<Throwable, Account> {
-    TODO("not implemented")
-  }
-
 }
