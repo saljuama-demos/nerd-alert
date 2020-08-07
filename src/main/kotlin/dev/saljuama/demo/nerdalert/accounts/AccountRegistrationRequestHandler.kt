@@ -1,7 +1,7 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.getOrElse
-import dev.saljuama.demo.nerdalert.accounts.ErrorResponse
+import arrow.core.getOrHandle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -34,10 +34,20 @@ class AccountRegistrationRequestHandler(
   fun verifyStarterAccount(request: ServerRequest): ServerResponse {
     val token = request.pathVariable("token")
     val username = request.pathVariable("username")
-
     return accountRegistrationService.verifyAccount(username, token)
       .map { ServerResponse.ok().build() }
       .getOrElse { ServerResponse.badRequest().build() }
   }
 
+  fun deleteAccount(request: ServerRequest): ServerResponse {
+    val username = request.pathVariable("username")
+    return accountRegistrationService.deleteAccount(username)
+      .map { ServerResponse.noContent().build() }
+      .getOrHandle { error ->
+        when (error) {
+          is AccountNotFoundException -> ServerResponse.noContent().build()
+          else -> ServerResponse.status(500).build()
+        }
+      }
+  }
 }

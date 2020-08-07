@@ -1,7 +1,7 @@
 package dev.saljuama.demo.nerdalert
 
+import dev.saljuama.demo.nerdalert.accounts.AccountRegistrationRequestHandler
 import dev.saljuama.demo.nerdalert.accounts.AccountsRequestHandler
-import dev.saljuama.demo.nerdalert.accounts.registration.AccountRegistrationRequestHandler
 import dev.saljuama.demo.nerdalert.profiles.ProfilesRequestHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -18,6 +18,7 @@ class Routing {
   ): RouterFunction<ServerResponse> = router {
     path("/api/accounts").nest {
       GET("/")(accountsRequestHandler::listAccounts)
+      DELETE("/{username}")(accountRegistrationRequestHandler::deleteAccount)
       GET("/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
       accept(APPLICATION_JSON).nest {
         POST("/")(accountRegistrationRequestHandler::registerNewAccount)

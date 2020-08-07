@@ -1,7 +1,6 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.fx.IO
-import dev.saljuama.demo.nerdalert.accounts.AccountNotFoundException
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import dev.saljuama.demos.nerdalert.tables.Account.ACCOUNT
 import org.jooq.DSLContext
@@ -54,6 +53,15 @@ class AccountRegistrationSqlRepository(
       sql.deleteFrom(ACCOUNT_VERIFICATION)
         .where(ACCOUNT_VERIFICATION.USERNAME.eq(account.username))
         .execute()
+      Unit
+    }
+  }
+
+  override fun deleteAccount(username: String): IO<Unit> {
+    return IO {
+      sql.selectFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq(username)).fetchOne()
+        ?: throw AccountNotFoundException()
+      sql.deleteFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq(username)).execute()
       Unit
     }
   }

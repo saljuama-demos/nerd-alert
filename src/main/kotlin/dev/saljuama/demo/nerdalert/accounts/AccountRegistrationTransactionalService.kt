@@ -1,9 +1,8 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.Either
 import arrow.fx.extensions.io.async.effectMap
 import arrow.fx.extensions.io.monad.flatTap
-import dev.saljuama.demo.nerdalert.accounts.Account
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -33,5 +32,11 @@ class AccountRegistrationTransactionalService(
     if (token != starterAccount.verification.token)
       throw InvalidVerificationException()
     return starterAccount
+  }
+
+  override fun deleteAccount(username: String): Either<Throwable, Unit> {
+    return repository.deleteAccount(username)
+      .attempt()
+      .unsafeRunSync()
   }
 }

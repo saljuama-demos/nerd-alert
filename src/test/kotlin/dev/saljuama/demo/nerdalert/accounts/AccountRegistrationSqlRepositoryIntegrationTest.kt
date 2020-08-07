@@ -1,9 +1,8 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
-import dev.saljuama.demo.nerdalert.accounts.AccountNotFoundException
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures
 import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
-import dev.saljuama.demos.nerdalert.Tables
+import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
+import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
@@ -22,8 +21,8 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
   @AfterEach
   fun tearDown() {
     DbTestUtils.wipeTables(sql, listOf(
-      Tables.ACCOUNT,
-      Tables.ACCOUNT_VERIFICATION
+      ACCOUNT,
+      ACCOUNT_VERIFICATION
     ))
   }
 
@@ -34,8 +33,8 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
     val result = repository.saveAccount(newAccount).unsafeRunSync()
 
     assertNotNull(result.verification.token)
-    assertEquals(1, sql.fetchCount(Tables.ACCOUNT))
-    assertEquals(1, sql.fetchCount(Tables.ACCOUNT_VERIFICATION))
+    assertEquals(1, sql.fetchCount(ACCOUNT))
+    assertEquals(1, sql.fetchCount(ACCOUNT_VERIFICATION))
   }
 
   @Test
@@ -46,8 +45,8 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
     val result = repository.saveAccount(newAccount).attempt().unsafeRunSync()
 
     assertTrue(result.isLeft())
-    assertEquals(1, sql.fetchCount(Tables.ACCOUNT))
-    assertEquals(1, sql.fetchCount(Tables.ACCOUNT_VERIFICATION))
+    assertEquals(1, sql.fetchCount(ACCOUNT))
+    assertEquals(1, sql.fetchCount(ACCOUNT_VERIFICATION))
   }
 
   @Test
@@ -75,12 +74,29 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
     repository.verifyAccount(starterAccount).unsafeRunSync()
 
     assertTrue(sql
-      .selectFrom(Tables.ACCOUNT)
-      .where(Tables.ACCOUNT.USERNAME.eq(newAccount.username))
+      .selectFrom(ACCOUNT)
+      .where(ACCOUNT.USERNAME.eq(newAccount.username))
       .fetchOne()
-      .getValue(Tables.ACCOUNT.VERIFIED)
+      .getValue(ACCOUNT.VERIFIED)
     )
-    assertEquals(0, sql.fetchCount(Tables.ACCOUNT_VERIFICATION))
+    assertEquals(0, sql.fetchCount(ACCOUNT_VERIFICATION))
+  }
+
+  @Test
+  internal fun `deleting a non verified account also deletes the verification on cascade`() {
+    DbTestUtils.createStarterAccount(sql, AccountsFixtures.starterAccount().copy(username = "Pepe"))
+
+    repository.deleteAccount("Pepe").unsafeRunSync()
+
+    assertEquals(0, sql.fetchCount(ACCOUNT))
+    assertEquals(0, sql.fetchCount(ACCOUNT_VERIFICATION))
+  }
+
+  @Test
+  internal fun `deleting an account that does not exist throws an exception`() {
+    assertThrows(AccountNotFoundException::class.java) {
+      repository.deleteAccount("non-existing-user").unsafeRunSync()
+    }
   }
 
 }

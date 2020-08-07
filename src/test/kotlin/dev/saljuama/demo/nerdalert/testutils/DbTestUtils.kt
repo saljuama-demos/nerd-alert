@@ -1,8 +1,6 @@
 package dev.saljuama.demo.nerdalert.testutils
 
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures
-import dev.saljuama.demo.nerdalert.accounts.registration.NewAccount
-import dev.saljuama.demo.nerdalert.accounts.registration.StarterAccount
+import dev.saljuama.demo.nerdalert.accounts.*
 import dev.saljuama.demo.nerdalert.profiles.Profile
 import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures
 import dev.saljuama.demos.nerdalert.Tables.*

@@ -1,17 +1,16 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.Either
 import arrow.fx.IO
-import dev.saljuama.demo.nerdalert.accounts.Account
 import java.time.LocalDate
 import java.util.*
+
 
 data class NewAccount(
   val username: String,
   val email: String,
   val password: String
 )
-
 data class StarterAccount(
   val username: String,
   val email: String,
@@ -23,16 +22,25 @@ data class AccountVerification(
   val token: String = UUID.randomUUID().toString()
 )
 
+data class Account(
+  val username: String,
+  val email: String,
+  val registered: LocalDate = LocalDate.now()
+)
+
 class UsernameOrEmailNotAvailableException : Throwable()
 class InvalidVerificationException : Throwable()
+class AccountNotFoundException : Throwable()
 
 interface AccountRegistrationService {
   fun createAccount(newAccount: NewAccount): Either<Throwable, StarterAccount>
   fun verifyAccount(username: String, token: String): Either<Throwable, Account>
+  fun deleteAccount(username: String): Either<Throwable, Unit>
 }
 
 interface AccountRegistrationRepository {
   fun saveAccount(account: NewAccount): IO<StarterAccount>
   fun findVerifiableAccount(username: String): IO<StarterAccount>
   fun verifyAccount(account: StarterAccount): IO<Unit>
+  fun deleteAccount(username: String): IO<Unit>
 }

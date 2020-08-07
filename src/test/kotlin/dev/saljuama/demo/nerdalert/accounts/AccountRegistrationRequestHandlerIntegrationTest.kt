@@ -1,9 +1,8 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.core.Left
 import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
-import dev.saljuama.demo.nerdalert.accounts.Account
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -79,4 +78,25 @@ internal class AccountRegistrationRequestHandlerIntegrationTest {
         status { isBadRequest }
       }
   }
+
+  @Test
+  internal fun `deleting an existing account returns 204`() {
+    every { accountRegistrationService.deleteAccount("Pepe") } returns Right(Unit)
+
+    mockMvc.delete("/api/accounts/Pepe")
+      .andExpect {
+        status { isNoContent }
+      }
+  }
+
+  @Test
+  internal fun `deleting a non existing account returns 204`() {
+    every { accountRegistrationService.deleteAccount("Pepe") } returns Left(AccountNotFoundException())
+
+    mockMvc.delete("/api/accounts/Pepe")
+      .andExpect {
+        status { isNoContent }
+      }
+  }
+
 }

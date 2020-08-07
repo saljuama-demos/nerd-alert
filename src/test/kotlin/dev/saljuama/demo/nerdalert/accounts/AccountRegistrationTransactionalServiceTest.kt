@@ -1,8 +1,6 @@
-package dev.saljuama.demo.nerdalert.accounts.registration
+package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.fx.IO
-import dev.saljuama.demo.nerdalert.accounts.AccountNotFoundException
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.starterAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -72,6 +70,24 @@ internal class AccountRegistrationTransactionalServiceTest {
     every { repository.findVerifiableAccount(AccountsFixtures.username) } returns IO { throw AccountNotFoundException() }
 
     val result = service.verifyAccount(AccountsFixtures.username, AccountsFixtures.verificationToken)
+
+    assertTrue(result.isLeft())
+  }
+
+  @Test
+  internal fun `delete an account that exists succeeds`() {
+    every { repository.deleteAccount(AccountsFixtures.username) } returns IO.unit
+
+    val result = service.deleteAccount(AccountsFixtures.username)
+
+    assertTrue(result.isRight())
+  }
+
+  @Test
+  internal fun `delete a non existing account returns an error`() {
+    every { repository.deleteAccount(AccountsFixtures.username) } returns IO { throw AccountNotFoundException() }
+
+    val result = service.deleteAccount(AccountsFixtures.username)
 
     assertTrue(result.isLeft())
   }
