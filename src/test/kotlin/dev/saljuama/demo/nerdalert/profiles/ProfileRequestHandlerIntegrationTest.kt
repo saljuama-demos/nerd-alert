@@ -3,7 +3,7 @@ package dev.saljuama.demo.nerdalert.profiles
 import arrow.core.Left
 import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
-import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures.defaultProfile
+import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.defaultProfile
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.*
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-internal class ProfilesRequestHandlerIntegrationTest {
+internal class ProfileRequestHandlerIntegrationTest {
 
   @MockkBean private lateinit var profilesService: ProfileService
   @Autowired private lateinit var mockMvc: MockMvc

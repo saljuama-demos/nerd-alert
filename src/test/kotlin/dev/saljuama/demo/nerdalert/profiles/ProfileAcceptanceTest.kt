@@ -1,6 +1,6 @@
 package dev.saljuama.demo.nerdalert.profiles
 
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.newAccount
+import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
 import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.*
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-internal class ProfilesAcceptanceTest {
+internal class ProfileAcceptanceTest {
 
   @Autowired private lateinit var mockMvc: MockMvc
   @Autowired private lateinit var sql: DSLContext

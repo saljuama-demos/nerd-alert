@@ -2,9 +2,10 @@ package dev.saljuama.demo.nerdalert.profiles
 
 import arrow.core.*
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
-class ProfilesTransactionalService(
+class ProfileTransactionalService(
   private val repository: ProfileRepository
 ) : ProfileService {
 
@@ -20,6 +21,7 @@ class ProfilesTransactionalService(
       }
   }
 
+  @Transactional
   override fun updateProfile(profile: Profile): Either<Throwable, Unit> {
     return repository.upsertProfile(profile)
       .attempt()

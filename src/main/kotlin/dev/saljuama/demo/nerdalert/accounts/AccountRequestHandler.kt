@@ -11,9 +11,11 @@ import org.springframework.web.servlet.function.ServerResponse
 
 data class NewAccountResponse(val verificationUrl: String)
 
+data class ErrorResponse(val error: String)
+
 @Component
-class AccountRegistrationRequestHandler(
-  private val accountRegistrationService: AccountRegistrationService
+class AccountRequestHandler(
+  private val accountService: AccountService
 ) {
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
 
@@ -21,7 +23,7 @@ class AccountRegistrationRequestHandler(
     val newAccountRequest = request.body(NewAccount::class.java)
     log.info("We've got a new account! $newAccountRequest")
 
-    return accountRegistrationService.createAccount(newAccountRequest)
+    return accountService.createAccount(newAccountRequest)
       .map {
         val username: String = it.username
         val token: String = it.verification.token
@@ -34,14 +36,14 @@ class AccountRegistrationRequestHandler(
   fun verifyStarterAccount(request: ServerRequest): ServerResponse {
     val token = request.pathVariable("token")
     val username = request.pathVariable("username")
-    return accountRegistrationService.verifyAccount(username, token)
+    return accountService.verifyAccount(username, token)
       .map { ServerResponse.ok().build() }
       .getOrElse { ServerResponse.badRequest().build() }
   }
 
   fun deleteAccount(request: ServerRequest): ServerResponse {
     val username = request.pathVariable("username")
-    return accountRegistrationService.deleteAccount(username)
+    return accountService.deleteAccount(username)
       .map { ServerResponse.noContent().build() }
       .getOrHandle { error ->
         when (error) {

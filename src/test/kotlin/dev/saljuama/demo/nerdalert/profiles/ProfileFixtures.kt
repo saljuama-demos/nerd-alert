@@ -1,6 +1,6 @@
 package dev.saljuama.demo.nerdalert.profiles
 
-object ProfilesFixtures {
+object ProfileFixtures {
   val username = "Pepe"
   val firstName = "Pepe"
   val lastName = "Jeans"

@@ -5,7 +5,6 @@ import arrow.fx.IO
 import java.time.LocalDate
 import java.util.*
 
-
 data class NewAccount(
   val username: String,
   val email: String,
@@ -17,11 +16,9 @@ data class StarterAccount(
   val registered: LocalDate = LocalDate.now(),
   val verification: AccountVerification = AccountVerification()
 )
-
 data class AccountVerification(
   val token: String = UUID.randomUUID().toString()
 )
-
 data class Account(
   val username: String,
   val email: String,
@@ -32,13 +29,13 @@ class UsernameOrEmailNotAvailableException : Throwable()
 class InvalidVerificationException : Throwable()
 class AccountNotFoundException : Throwable()
 
-interface AccountRegistrationService {
+interface AccountService {
   fun createAccount(newAccount: NewAccount): Either<Throwable, StarterAccount>
   fun verifyAccount(username: String, token: String): Either<Throwable, Account>
   fun deleteAccount(username: String): Either<Throwable, Unit>
 }
 
-interface AccountRegistrationRepository {
+interface AccountRepository {
   fun saveAccount(account: NewAccount): IO<StarterAccount>
   fun findVerifiableAccount(username: String): IO<StarterAccount>
   fun verifyAccount(account: StarterAccount): IO<Unit>

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-class AccountRegistrationTransactionalService(
-  private val repository: AccountRegistrationRepository
-) : AccountRegistrationService {
+class AccountTransactionalService(
+  private val repository: AccountRepository
+) : AccountService {
 
   @Transactional
   override fun createAccount(newAccount: NewAccount): Either<Throwable, StarterAccount> {
@@ -20,6 +20,11 @@ class AccountRegistrationTransactionalService(
 
   @Transactional
   override fun verifyAccount(username: String, token: String): Either<Throwable, Account> {
+    fun validateToken(token: String, starterAccount: StarterAccount): StarterAccount {
+      if (token != starterAccount.verification.token)
+        throw InvalidVerificationException()
+      return starterAccount
+    }
     return repository.findVerifiableAccount(username)
       .effectMap { starterAccount -> validateToken(token, starterAccount) }
       .flatTap { starterAccount -> repository.verifyAccount(starterAccount) }
@@ -28,12 +33,7 @@ class AccountRegistrationTransactionalService(
       .unsafeRunSync()
   }
 
-  private fun validateToken(token: String, starterAccount: StarterAccount): StarterAccount {
-    if (token != starterAccount.verification.token)
-      throw InvalidVerificationException()
-    return starterAccount
-  }
-
+  @Transactional
   override fun deleteAccount(username: String): Either<Throwable, Unit> {
     return repository.deleteAccount(username)
       .attempt()

@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.*
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("integration-test")
-internal class AccountRegistrationAcceptanceTest {
+internal class AccountAcceptanceTest {
 
   @Autowired private lateinit var mockMvc: MockMvc
   @Autowired private lateinit var sql: DSLContext

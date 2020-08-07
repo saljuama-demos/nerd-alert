@@ -7,9 +7,9 @@ import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 
 @Component
-class AccountRegistrationSqlRepository(
+class AccountSqlRepository(
   private val sql: DSLContext
-) : AccountRegistrationRepository {
+) : AccountRepository {
 
   override fun saveAccount(account: NewAccount): IO<StarterAccount> {
     return IO {

@@ -1,7 +1,6 @@
 package dev.saljuama.demo.nerdalert
 
-import dev.saljuama.demo.nerdalert.accounts.AccountRegistrationRequestHandler
-import dev.saljuama.demo.nerdalert.accounts.AccountsRequestHandler
+import dev.saljuama.demo.nerdalert.accounts.AccountRequestHandler
 import dev.saljuama.demo.nerdalert.profiles.ProfilesRequestHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,24 +11,18 @@ import org.springframework.web.servlet.function.*
 class Routing {
 
   @Bean
-  fun accountsRouter(
-    accountRegistrationRequestHandler: AccountRegistrationRequestHandler,
-    accountsRequestHandler: AccountsRequestHandler
-  ): RouterFunction<ServerResponse> = router {
+  fun accountsRouter(accountRequestHandler: AccountRequestHandler): RouterFunction<ServerResponse> = router {
     path("/api/accounts").nest {
-      GET("/")(accountsRequestHandler::listAccounts)
-      DELETE("/{username}")(accountRegistrationRequestHandler::deleteAccount)
-      GET("/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
+      GET("/{username}/verify/{token}")(accountRequestHandler::verifyStarterAccount)
       accept(APPLICATION_JSON).nest {
-        POST("/")(accountRegistrationRequestHandler::registerNewAccount)
+        POST("/")(accountRequestHandler::registerNewAccount)
+        DELETE("/{username}")(accountRequestHandler::deleteAccount)
       }
     }
   }
 
   @Bean
-  fun profilesRouter(
-    profilesRequestHandler: ProfilesRequestHandler
-  ): RouterFunction<ServerResponse> = router {
+  fun profilesRouter(profilesRequestHandler: ProfilesRequestHandler): RouterFunction<ServerResponse> = router {
     path("/api/profiles").nest {
       GET("/{username}")(profilesRequestHandler::viewUserProfile)
       accept(APPLICATION_JSON).nest {

@@ -1,7 +1,7 @@
 package dev.saljuama.demo.nerdalert.profiles
 
-import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.newAccount
-import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures.profile
+import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
+import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.profile
 import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
@@ -73,7 +73,7 @@ internal class ProfileSqlRepositoryTest {
 
     repository.upsertProfile(profile().copy(username = "Pepe", firstName = "Jose")).unsafeRunSync()
 
-    assertEquals(0, sql.fetchCount(USER_PROFILE, USER_PROFILE.FIRST_NAME.eq(ProfilesFixtures.firstName)))
+    assertEquals(0, sql.fetchCount(USER_PROFILE, USER_PROFILE.FIRST_NAME.eq(ProfileFixtures.firstName)))
     assertEquals(1, sql.fetchCount(USER_PROFILE, USER_PROFILE.FIRST_NAME.eq("Jose")))
   }
 

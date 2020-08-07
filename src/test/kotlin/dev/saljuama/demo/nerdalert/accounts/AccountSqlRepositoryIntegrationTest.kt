@@ -13,10 +13,10 @@ import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest
 @ActiveProfiles("integration-test")
-internal class AccountRegistrationSqlRepositoryIntegrationTest {
+internal class AccountSqlRepositoryIntegrationTest {
 
   @Autowired private lateinit var sql: DSLContext
-  @Autowired private lateinit var repository: AccountRegistrationRepository
+  @Autowired private lateinit var repository: AccountRepository
 
   @AfterEach
   fun tearDown() {
@@ -28,7 +28,7 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
 
   @Test
   internal fun `saving a new account creates the account and a verification`() {
-    val newAccount = AccountsFixtures.newAccount()
+    val newAccount = AccountFixtures.newAccount()
 
     val result = repository.saveAccount(newAccount).unsafeRunSync()
 
@@ -39,7 +39,7 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
 
   @Test
   internal fun `saving a new account with an username in use will fail`() {
-    val newAccount = AccountsFixtures.newAccount()
+    val newAccount = AccountFixtures.newAccount()
     repository.saveAccount(newAccount).unsafeRunSync()
 
     val result = repository.saveAccount(newAccount).attempt().unsafeRunSync()
@@ -51,7 +51,7 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
 
   @Test
   internal fun `find verifiable accounts finds a starter account that exists`() {
-    val newAccount = AccountsFixtures.newAccount()
+    val newAccount = AccountFixtures.newAccount()
     repository.saveAccount(newAccount).unsafeRunSync()
 
     val result = repository.findVerifiableAccount(newAccount.username).unsafeRunSync()
@@ -68,7 +68,7 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
 
   @Test
   internal fun `verifying an account updates the verified field and deletes a verification record`() {
-    val newAccount = AccountsFixtures.newAccount()
+    val newAccount = AccountFixtures.newAccount()
     val starterAccount = repository.saveAccount(newAccount).unsafeRunSync()
 
     repository.verifyAccount(starterAccount).unsafeRunSync()
@@ -84,7 +84,7 @@ internal class AccountRegistrationSqlRepositoryIntegrationTest {
 
   @Test
   internal fun `deleting a non verified account also deletes the verification on cascade`() {
-    DbTestUtils.createStarterAccount(sql, AccountsFixtures.starterAccount().copy(username = "Pepe"))
+    DbTestUtils.createStarterAccount(sql, AccountFixtures.starterAccount().copy(username = "Pepe"))
 
     repository.deleteAccount("Pepe").unsafeRunSync()
 

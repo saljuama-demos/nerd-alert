@@ -2,7 +2,7 @@ package dev.saljuama.demo.nerdalert.accounts
 
 import java.time.LocalDate
 
-object AccountsFixtures {
+object AccountFixtures {
   val username = "user1"
   val email = "email@one.com"
   val password = "pass1"

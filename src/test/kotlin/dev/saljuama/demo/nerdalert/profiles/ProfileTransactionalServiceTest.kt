@@ -2,7 +2,7 @@ package dev.saljuama.demo.nerdalert.profiles
 
 import arrow.core.getOrHandle
 import arrow.fx.IO
-import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures.profile
+import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.profile
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
-internal class ProfilesTransactionalServiceTest {
+internal class ProfileTransactionalServiceTest {
 
   @MockK private lateinit var repository: ProfileRepository
   private lateinit var service: ProfileService
 
   @BeforeEach
   fun setUp() {
-    service = ProfilesTransactionalService(repository)
+    service = ProfileTransactionalService(repository)
   }
 
   @Test

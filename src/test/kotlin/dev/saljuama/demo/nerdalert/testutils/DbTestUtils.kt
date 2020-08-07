@@ -2,7 +2,7 @@ package dev.saljuama.demo.nerdalert.testutils
 
 import dev.saljuama.demo.nerdalert.accounts.*
 import dev.saljuama.demo.nerdalert.profiles.Profile
-import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures
+import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures
 import dev.saljuama.demos.nerdalert.Tables.*
 import org.jooq.*
 import java.time.LocalDate
@@ -19,11 +19,11 @@ object DbTestUtils {
     tables.forEach { sql.deleteFrom(it).execute() }
   }
 
-  fun createStarterAccount(sql: DSLContext, account: StarterAccount = AccountsFixtures.starterAccount()) {
+  fun createStarterAccount(sql: DSLContext, account: StarterAccount = AccountFixtures.starterAccount()) {
     val accountRecord = sql.newRecord(ACCOUNT)
       .setUsername(account.username)
       .setEmail(account.email)
-      .setPassword(AccountsFixtures.password)
+      .setPassword(AccountFixtures.password)
       .setRegistered(account.registered)
       .setVerified(false)
     sql.insertInto(ACCOUNT).set(accountRecord).execute()
@@ -34,7 +34,7 @@ object DbTestUtils {
     sql.insertInto(ACCOUNT_VERIFICATION).set(verificationRecord).execute()
   }
 
-  fun createVerifiedAccount(sql: DSLContext, account: NewAccount = AccountsFixtures.newAccount()) {
+  fun createVerifiedAccount(sql: DSLContext, account: NewAccount = AccountFixtures.newAccount()) {
     val record = sql.newRecord(ACCOUNT)
       .setUsername(account.username)
       .setEmail(account.email)
@@ -44,7 +44,7 @@ object DbTestUtils {
     sql.insertInto(ACCOUNT).set(record).execute()
   }
 
-  fun createProfileForUser(sql: DSLContext, profile: Profile = ProfilesFixtures.profile()) {
+  fun createProfileForUser(sql: DSLContext, profile: Profile = ProfileFixtures.profile()) {
     val record = sql.newRecord(USER_PROFILE)
       .setUsername(profile.username)
       .setFirstName(profile.firstName)
