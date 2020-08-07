@@ -7,15 +7,7 @@ import java.time.LocalDate
 data class Account(
   val username: String,
   val email: String,
-  val registered: LocalDate = LocalDate.now(),
-  val profile: UserProfile = UserProfile(username)
-)
-
-data class UserProfile(
-  val firstName: String,
-  val lastName: String? = null,
-  val description: String? = null,
-  val imageUrl: String? = null
+  val registered: LocalDate = LocalDate.now()
 )
 
 class AccountNotFoundException : Throwable()

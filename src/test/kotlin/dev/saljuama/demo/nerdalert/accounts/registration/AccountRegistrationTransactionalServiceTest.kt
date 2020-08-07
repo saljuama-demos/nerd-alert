@@ -3,11 +3,13 @@ package dev.saljuama.demo.nerdalert.accounts.registration
 import arrow.fx.IO
 import dev.saljuama.demo.nerdalert.accounts.AccountNotFoundException
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures
+import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.starterAccount
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -53,13 +55,12 @@ internal class AccountRegistrationTransactionalServiceTest {
     val result = service.verifyAccount(AccountsFixtures.username, AccountsFixtures.verificationToken)
 
     assertTrue(result.isRight())
-    result.map { account -> assertEquals(account.username, account.profile.firstName) }
     verify { repository.verifyAccount(starterAccount) }
   }
 
   @Test
   internal fun `verifying an account with an invalid token returns an exception`() {
-    every { repository.findVerifiableAccount(AccountsFixtures.username) } returns IO { AccountsFixtures.starterAccount() }
+    every { repository.findVerifiableAccount(AccountsFixtures.username) } returns IO { starterAccount() }
 
     val result = service.verifyAccount(AccountsFixtures.username, "invalid-token")
 
