@@ -20,4 +20,8 @@ class ProfilesTransactionalService(
       }
   }
 
+  override fun updateProfile(profile: Profile): Either<Throwable, Unit> {
+    TODO("not implemented")
+  }
+
 }

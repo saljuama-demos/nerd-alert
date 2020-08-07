@@ -3,7 +3,6 @@ package dev.saljuama.demo.nerdalert.accounts
 import arrow.core.getOrHandle
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
@@ -26,20 +25,6 @@ class AccountsRequestHandler(
   private val accountsService: AccountsService
 ) {
   private val log: Logger = LoggerFactory.getLogger(this::class.java)
-
-  fun updateProfile(request: ServerRequest): ServerResponse {
-    val username = request.pathVariable("username")
-    val newUserProfileRequest = request.body(NewUserProfileRequest::class.java)
-
-    return accountsService.updateProfile(username, newUserProfileRequest.toInput())
-      .map { ServerResponse.status(HttpStatus.CREATED).build() }
-      .getOrHandle { error ->
-        when (error) {
-          is AccountNotFoundException -> ServerResponse.badRequest().body(ErrorResponse("account not found or not verified"))
-          else -> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse("unknown error"))
-        }
-      }
-  }
 
   fun listAccounts(request: ServerRequest): ServerResponse {
     return accountsService.listAllAccounts()

@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.*
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,5 +49,45 @@ internal class ProfilesRequestHandlerIntegrationTest {
       .andExpect {
         status { isNotFound }
       }
+  }
+
+  @Test
+  internal fun `updating a profile for a non existing account returns 400`() {
+    every { profilesService.updateProfile(Profile("Pepe", "Pepe", "Romero", "secret", "http://fancy.com/img.jpg")) } returns
+      Left(ProfileNotFoundException())
+
+    mockMvc.put("/api/profiles/Pepe") {
+      contentType = MediaType.APPLICATION_JSON
+      content = """
+          {
+            "firstName": "Pepe",
+            "lastName": "Romero",
+            "description": "secret",
+            "avatar": "http://fancy.com/img.jpg"
+          }
+          """
+    }.andExpect {
+      status { isBadRequest }
+    }
+  }
+
+  @Test
+  internal fun `updating a profile for an existing account returns 202`() {
+    every { profilesService.updateProfile(Profile("Pepe", "Pepe", "Romero", "secret", "http://fancy.com/img.jpg")) } returns
+      Right(Unit)
+
+    mockMvc.put("/api/profiles/Pepe") {
+      contentType = MediaType.APPLICATION_JSON
+      content = """
+          {
+            "firstName": "Pepe",
+            "lastName": "Romero",
+            "description": "secret",
+            "avatar": "http://fancy.com/img.jpg"
+          }
+          """
+    }.andExpect {
+      status { isAccepted }
+    }
   }
 }

@@ -21,7 +21,6 @@ class Routing {
       GET("/{username}/verify/{token}")(accountRegistrationRequestHandler::verifyStarterAccount)
       accept(APPLICATION_JSON).nest {
         POST("/")(accountRegistrationRequestHandler::registerNewAccount)
-        PUT("/{username}/profile")(accountsRequestHandler::updateProfile)
       }
     }
   }
@@ -32,6 +31,9 @@ class Routing {
   ): RouterFunction<ServerResponse> = router {
     path("/api/profiles").nest {
       GET("/{username}")(profilesRequestHandler::viewUserProfile)
+      accept(APPLICATION_JSON).nest {
+        PUT("/{username}")(profilesRequestHandler::updateUserProfile)
+      }
     }
   }
 

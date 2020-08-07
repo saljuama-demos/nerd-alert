@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -19,62 +19,6 @@ internal class AccountsRequestHandlerIntegrationTest {
 
   @MockkBean private lateinit var accountService: AccountsService
   @Autowired private lateinit var mockMvc: MockMvc
-
-  @Test
-  internal fun `creating a new user profile returns 201`() {
-    every { accountService.updateProfile(any(), any()) } returns
-      Right(Account("Pepe", "email", profile = UserProfile("Pepe", "Romero", "secret", "http://fancy.com/img.jpg")))
-
-    mockMvc.put("/api/accounts/Pepe/profile") {
-      contentType = MediaType.APPLICATION_JSON
-      content = """
-          {
-            "firstName": "Pepe",
-            "lastName": "Romero",
-            "description": "secret",
-            "imageUrl": "http://fancy.com/img.jpg"
-          }
-          """
-    }.andExpect {
-      status { isCreated }
-    }
-  }
-
-  @Test
-  internal fun `creating a new account with missing required fields returns 400`() {
-    mockMvc.put("/api/accounts/Pepe/profile") {
-      contentType = MediaType.APPLICATION_JSON
-      content = """
-          {
-            "lastName": "Romero",
-            "description": "secret",
-            "imageUrl": "http://fancy.com/img.jpg"
-          }
-          """
-    }.andExpect {
-      status { isBadRequest }
-    }
-  }
-
-  @Test
-  internal fun `creating a new user profile with not verified account returns 400`() {
-    every { accountService.updateProfile(any(), any()) } returns Left(AccountNotFoundException())
-
-    mockMvc.put("/api/accounts/Pepe/profile") {
-      contentType = MediaType.APPLICATION_JSON
-      content = """
-          {
-            "firstName": "Pepe",
-            "lastName": "Romero",
-            "description": "secret",
-            "imageUrl": "http://fancy.com/img.jpg"
-          }
-          """
-    }.andExpect {
-      status { isBadRequest }
-      jsonPath("$.error") { value("account not found or not verified") }
-    }
-  }
 
   @Test
   internal fun `listing all the accounts when no accounts available returns 404`() {
