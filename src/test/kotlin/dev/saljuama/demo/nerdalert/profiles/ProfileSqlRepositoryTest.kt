@@ -3,7 +3,8 @@ package dev.saljuama.demo.nerdalert.profiles
 import dev.saljuama.demo.nerdalert.accounts.AccountsFixtures.newAccount
 import dev.saljuama.demo.nerdalert.profiles.ProfilesFixtures.profile
 import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
-import dev.saljuama.demos.nerdalert.Tables
+import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
+import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -23,29 +24,13 @@ internal class ProfileSqlRepositoryTest {
   @AfterEach
   internal fun tearDown() {
     DbTestUtils.wipeTables(sql, listOf(
-      Tables.ACCOUNT,
-      Tables.USER_PROFILE
+      ACCOUNT,
+      USER_PROFILE
     ))
   }
 
   @Test
-  internal fun `when account exists and profile is not initialized throw ProfileNotInitialized`() {
-    DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = "User1"))
-
-    assertThrows(ProfileNotInitializedException::class.java) {
-      repository.findProfile("User1").unsafeRunSync()
-    }
-  }
-
-  @Test
-  internal fun `when account does not exist throw ProfileNotFound`() {
-    assertThrows(ProfileNotFoundException::class.java) {
-      repository.findProfile("non-existing-user").unsafeRunSync()
-    }
-  }
-
-  @Test
-  internal fun `when account exists and profile is initialized return the profile`() {
+  internal fun `find a profile for an existing account with a profile returns the profile`() {
     val username = "User1"
     val initializedProfile = profile().copy(username = username)
     DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = username))
@@ -56,4 +41,46 @@ internal class ProfileSqlRepositoryTest {
     assertEquals(initializedProfile, profile)
   }
 
+  @Test
+  internal fun `find a profile for an account without initialised profile throws ProfileNotInitialized`() {
+    DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = "User1"))
+
+    assertThrows(ProfileNotInitializedException::class.java) {
+      repository.findProfile("User1").unsafeRunSync()
+    }
+  }
+
+  @Test
+  internal fun `find a profile for a non existing account throw ProfileNotFound`() {
+    assertThrows(ProfileNotFoundException::class.java) {
+      repository.findProfile("non-existing-user").unsafeRunSync()
+    }
+  }
+
+  @Test
+  internal fun `upsert a profile for an account without a profile creates the profile`() {
+    DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = "Pepe"))
+
+    repository.upsertProfile(profile().copy(username = "Pepe")).unsafeRunSync()
+
+    assertEquals(1, sql.fetchCount(USER_PROFILE, USER_PROFILE.USERNAME.eq("Pepe")))
+  }
+
+  @Test
+  internal fun `upsert a profile for an account with a profile updates the profile`() {
+    DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = "Pepe"))
+    DbTestUtils.createProfileForUser(sql, profile().copy(username = "Pepe"))
+
+    repository.upsertProfile(profile().copy(username = "Pepe", firstName = "Jose")).unsafeRunSync()
+
+    assertEquals(0, sql.fetchCount(USER_PROFILE, USER_PROFILE.FIRST_NAME.eq(ProfilesFixtures.firstName)))
+    assertEquals(1, sql.fetchCount(USER_PROFILE, USER_PROFILE.FIRST_NAME.eq("Jose")))
+  }
+
+  @Test
+  internal fun `upsert a profile for a non existing account throws ProfileNotFound`() {
+    assertThrows(ProfileNotFoundException::class.java) {
+      repository.upsertProfile(profile()).unsafeRunSync()
+    }
+  }
 }

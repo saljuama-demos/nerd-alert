@@ -21,13 +21,10 @@ data class UserProfile(
 class AccountNotFoundException : Throwable()
 
 interface AccountsService {
-  fun updateProfile(username: String, profile: UserProfile): Either<Throwable, Account>
   fun deleteAccount(username: String): Either<Throwable, Unit>
   fun listAllAccounts(): Either<Throwable, List<Account>>
 }
 
 interface AccountsRepository {
-  fun findVerifiedAccount(username: String): IO<Account>
-  fun updateProfile(account: Account): IO<Unit>
   fun deleteAccount(username: String): IO<Unit>
 }

@@ -27,4 +27,22 @@ class ProfileSqlRepository(
     }
   }
 
+  override fun upsertProfile(profile: Profile): IO<Unit> {
+    return IO {
+      sql.selectFrom(ACCOUNT).where(ACCOUNT.USERNAME.eq(profile.username)).fetchOne()
+        ?: throw ProfileNotFoundException()
+
+      val record = sql.newRecord(USER_PROFILE)
+        .setUsername(profile.username)
+        .setFirstName(profile.firstName)
+        .setLastName(profile.lastName)
+        .setDescription(profile.description)
+        .setImageUrl(profile.avatar)
+      sql.insertInto(USER_PROFILE).set(record)
+        .onDuplicateKeyUpdate().set(record)
+        .execute()
+      Unit
+    }
+  }
+
 }

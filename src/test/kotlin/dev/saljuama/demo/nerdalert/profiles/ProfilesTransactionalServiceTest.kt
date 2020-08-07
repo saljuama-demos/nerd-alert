@@ -60,4 +60,21 @@ internal class ProfilesTransactionalServiceTest {
     assertTrue(result.isLeft())
   }
 
+  @Test
+  internal fun `updating a profile for an existing account upsert the profile and returns success`() {
+    every { repository.upsertProfile(profile()) } returns IO.unit
+
+    val result = service.updateProfile(profile())
+
+    assertTrue(result.isRight())
+  }
+
+  @Test
+  internal fun `updating a profile for a non existing account returns an error`() {
+    every { repository.upsertProfile(profile()) } returns IO { throw ProfileNotFoundException() }
+
+    val result = service.updateProfile(profile())
+
+    assertTrue(result.isLeft())
+  }
 }
