@@ -6,3 +6,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jooq:
     sql-dialect: postgres
+
+jwt:
+  secret: "this is a very random secret that needs to be 256 bits long at least, so not sure if this is going to be long enough but we will see soon"
+  tokenTimeoutInSeconds: 1800
