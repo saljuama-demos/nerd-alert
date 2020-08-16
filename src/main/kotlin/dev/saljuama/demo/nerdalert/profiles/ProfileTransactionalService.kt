@@ -28,4 +28,8 @@ class ProfileTransactionalService(
       .unsafeRunSync()
   }
 
+  override fun searchProfiles(): Either<Throwable, List<Profile>> {
+    TODO("not implemented")
+  }
+
 }

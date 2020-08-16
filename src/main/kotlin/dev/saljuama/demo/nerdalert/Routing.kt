@@ -24,6 +24,7 @@ class Routing {
   @Bean
   fun profilesRouter(profilesRequestHandler: ProfilesRequestHandler): RouterFunction<ServerResponse> = router {
     path("/api/profiles").nest {
+      GET("/search")(profilesRequestHandler::searchUserProfiles)
       GET("/{username}")(profilesRequestHandler::viewUserProfile)
       accept(APPLICATION_JSON).nest {
         PUT("/{username}")(profilesRequestHandler::updateUserProfile)

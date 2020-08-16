@@ -47,4 +47,10 @@ class ProfilesRequestHandler(
       }
   }
 
+  fun searchUserProfiles(request: ServerRequest): ServerResponse {
+    return profileService.searchProfiles()
+      .map { ServerResponse.ok().body(it) }
+      .getOrHandle { ServerResponse.status(500).build() }
+  }
+
 }

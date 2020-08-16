@@ -19,6 +19,7 @@ class ProfileNotInitializedException : Throwable()
 interface ProfileService {
   fun findProfile(username: String): Either<Throwable, Profile>
   fun updateProfile(profile: Profile): Either<Throwable, Unit>
+  fun searchProfiles(): Either<Throwable, List<Profile>>
 }
 
 interface ProfileRepository {

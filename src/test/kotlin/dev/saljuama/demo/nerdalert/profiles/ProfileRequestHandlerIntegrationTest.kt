@@ -93,4 +93,53 @@ internal class ProfileRequestHandlerIntegrationTest {
       status { isAccepted }
     }
   }
+
+  @Test
+  internal fun `search profiles returns a list of verified profiles and 200`() {
+    every { profilesService.searchProfiles() } returns Right(listOf(
+      ProfileFixtures.profile().copy(username = "Pepe"),
+      ProfileFixtures.profile().copy(username = "Ana"),
+      ProfileFixtures.profile().copy(username = "Paco"),
+      ProfileFixtures.profile().copy(username = "Angelika")
+    ))
+
+    mockMvc.get("/api/profiles/search")
+      .andExpect {
+        status { isOk }
+        content {
+          json("""
+          [
+            { 
+              "username": "Pepe",
+               "firstName": "${ProfileFixtures.firstName}",
+               "lastName": "${ProfileFixtures.lastName}",
+               "description": "${ProfileFixtures.description}",
+               "avatar":"${ProfileFixtures.avatar}"
+            },
+            { 
+              "username": "Ana",
+               "firstName": "${ProfileFixtures.firstName}",
+               "lastName": "${ProfileFixtures.lastName}",
+               "description": "${ProfileFixtures.description}",
+               "avatar":"${ProfileFixtures.avatar}"
+            },
+            { 
+              "username": "Paco",
+               "firstName": "${ProfileFixtures.firstName}",
+               "lastName": "${ProfileFixtures.lastName}",
+               "description": "${ProfileFixtures.description}",
+               "avatar":"${ProfileFixtures.avatar}"
+            },
+            { 
+              "username": "Angelika",
+               "firstName": "${ProfileFixtures.firstName}",
+               "lastName": "${ProfileFixtures.lastName}",
+               "description": "${ProfileFixtures.description}",
+               "avatar":"${ProfileFixtures.avatar}"
+            }
+          ]
+        """)
+        }
+      }
+  }
 }
