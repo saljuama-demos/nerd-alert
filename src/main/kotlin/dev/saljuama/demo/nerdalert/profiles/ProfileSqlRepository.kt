@@ -1,8 +1,8 @@
 package dev.saljuama.demo.nerdalert.profiles
 
 import arrow.fx.IO
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
-import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
+import dev.saljuama.demo.nerdalert.Tables.ACCOUNT
+import dev.saljuama.demo.nerdalert.Tables.USER_PROFILE
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 

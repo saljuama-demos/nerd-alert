@@ -1,8 +1,8 @@
 package dev.saljuama.demo.nerdalert.accounts
 
 import dev.saljuama.demo.nerdalert.DbTestUtils
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
+import dev.saljuama.demo.nerdalert.Tables.ACCOUNT
+import dev.saljuama.demo.nerdalert.Tables.ACCOUNT_VERIFICATION
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*

@@ -1,12 +1,12 @@
 package dev.saljuama.demo.nerdalert.profiles
 
 import dev.saljuama.demo.nerdalert.DbTestUtils
+import dev.saljuama.demo.nerdalert.Tables.ACCOUNT
+import dev.saljuama.demo.nerdalert.Tables.USER_PROFILE
 import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
 import dev.saljuama.demo.nerdalert.accounts.NewAccount
 import dev.saljuama.demo.nerdalert.accounts.StarterAccount
 import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.profile
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
-import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

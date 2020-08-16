@@ -1,8 +1,8 @@
 package dev.saljuama.demo.nerdalert.accounts
 
 import arrow.fx.IO
-import dev.saljuama.demos.nerdalert.Tables.ACCOUNT_VERIFICATION
-import dev.saljuama.demos.nerdalert.tables.Account.ACCOUNT
+import dev.saljuama.demo.nerdalert.Tables.ACCOUNT_VERIFICATION
+import dev.saljuama.demo.nerdalert.tables.Account.ACCOUNT
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 

@@ -1,9 +1,9 @@
 package dev.saljuama.demo.nerdalert
 
+import dev.saljuama.demo.nerdalert.Tables.*
 import dev.saljuama.demo.nerdalert.accounts.*
 import dev.saljuama.demo.nerdalert.profiles.Profile
 import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures
-import dev.saljuama.demos.nerdalert.Tables.*
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.jooq.*

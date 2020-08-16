@@ -38,7 +38,7 @@ jooq {
                 fluentSetters = true
             }
             target {
-                packageName = 'dev.saljuama.demos.nerdalert'
+                packageName = 'dev.saljuama.demo.nerdalert'
                 directory = 'src/main/generated'
             }
         }
