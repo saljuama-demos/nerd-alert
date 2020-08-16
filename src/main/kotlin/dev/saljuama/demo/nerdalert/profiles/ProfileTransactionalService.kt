@@ -29,7 +29,9 @@ class ProfileTransactionalService(
   }
 
   override fun searchProfiles(): Either<Throwable, List<Profile>> {
-    TODO("not implemented")
+    return repository.findVerifiedProfiles()
+      .attempt()
+      .unsafeRunSync()
   }
 
 }

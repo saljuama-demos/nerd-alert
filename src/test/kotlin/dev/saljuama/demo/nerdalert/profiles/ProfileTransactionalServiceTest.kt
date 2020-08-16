@@ -77,4 +77,23 @@ internal class ProfileTransactionalServiceTest {
 
     assertTrue(result.isLeft())
   }
+
+  @Test
+  internal fun `searching profiles filters out starter accounts and only returns the list of verified accounts`() {
+    every { repository.findVerifiedProfiles() } returns IO {
+      listOf(
+        profile().copy(username = "user1"),
+        profile().copy(username = "user2"),
+        profile().copy(username = "user3")
+      )
+    }
+
+    val result = service.searchProfiles()
+
+    result
+      .map { profiles ->
+        assertEquals(3, profiles.size)
+      }
+      .getOrHandle { fail() }
+  }
 }

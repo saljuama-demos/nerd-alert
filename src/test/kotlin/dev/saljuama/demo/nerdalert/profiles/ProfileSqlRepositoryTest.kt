@@ -2,6 +2,8 @@ package dev.saljuama.demo.nerdalert.profiles
 
 import dev.saljuama.demo.nerdalert.DbTestUtils
 import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
+import dev.saljuama.demo.nerdalert.accounts.NewAccount
+import dev.saljuama.demo.nerdalert.accounts.StarterAccount
 import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.profile
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
@@ -82,5 +84,30 @@ internal class ProfileSqlRepositoryTest {
     assertThrows(ProfileNotFoundException::class.java) {
       repository.upsertProfile(profile()).unsafeRunSync()
     }
+  }
+
+  @Test
+  internal fun `finding verified profiles returns the list of verified profiles`() {
+    DbTestUtils.createVerifiedAccount(sql, NewAccount("user1", "user1@email.com", "secret"))
+    DbTestUtils.createVerifiedAccount(sql, NewAccount("user2", "user2@email.com", "secret"))
+    DbTestUtils.createVerifiedAccount(sql, NewAccount("user3", "user3@email.com", "secret"))
+    DbTestUtils.createProfileForUser(sql, profile().copy(username = "user1"))
+    DbTestUtils.createProfileForUser(sql, profile().copy(username = "user2"))
+    DbTestUtils.createProfileForUser(sql, profile().copy(username = "user3"))
+
+    val verifiedProfiles = repository.findVerifiedProfiles().unsafeRunSync()
+
+    assertEquals(3, verifiedProfiles.size)
+  }
+
+  @Test
+  internal fun `finding verified profiles ignore starter accounts`() {
+    DbTestUtils.createStarterAccount(sql, StarterAccount("user1", "email1"))
+    DbTestUtils.createStarterAccount(sql, StarterAccount("user2", "email2"))
+    DbTestUtils.createStarterAccount(sql, StarterAccount("user3", "email3"))
+
+    val verifiedProfiles = repository.findVerifiedProfiles().unsafeRunSync()
+
+    assertEquals(0, verifiedProfiles.size)
   }
 }

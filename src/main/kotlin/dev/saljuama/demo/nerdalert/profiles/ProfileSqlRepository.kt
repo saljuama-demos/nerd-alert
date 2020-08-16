@@ -45,4 +45,21 @@ class ProfileSqlRepository(
     }
   }
 
+  override fun findVerifiedProfiles(): IO<List<Profile>> {
+    return IO {
+      sql.selectFrom(USER_PROFILE
+        .innerJoin(ACCOUNT).on(ACCOUNT.USERNAME.eq(USER_PROFILE.USERNAME)))
+        .where(ACCOUNT.VERIFIED.eq(true))
+        .fetch { record ->
+          Profile(
+            record.getValue(USER_PROFILE.USERNAME),
+            record.getValue(USER_PROFILE.FIRST_NAME),
+            record.getValue(USER_PROFILE.LAST_NAME),
+            record.getValue(USER_PROFILE.DESCRIPTION),
+            record.getValue(USER_PROFILE.IMAGE_URL)
+          )
+        }
+    }
+  }
+
 }

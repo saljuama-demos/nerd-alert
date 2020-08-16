@@ -25,4 +25,5 @@ interface ProfileService {
 interface ProfileRepository {
   fun findProfile(username: String): IO<Profile>
   fun upsertProfile(profile: Profile): IO<Unit>
+  fun findVerifiedProfiles(): IO<List<Profile>>
 }
