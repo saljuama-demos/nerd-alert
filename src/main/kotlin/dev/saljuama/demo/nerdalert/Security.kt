@@ -57,7 +57,9 @@ class Security(private val jwtTokenFactory: JwtTokenFactory) : WebSecurityConfig
       .addFilter(JwtLoginFilter(authenticationManager(), jwtTokenFactory))
       .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenFactory))
   }
+
 }
+
 
 @Component
 @ConfigurationProperties(prefix = "jwt")
@@ -65,6 +67,7 @@ data class JwtProperties(
   var secret: String = "",
   var tokenTimeoutInSeconds: Int = 1800
 )
+
 
 @Component
 class JwtTokenFactory(private val jwtProperties: JwtProperties) {
@@ -94,12 +97,15 @@ class JwtTokenFactory(private val jwtProperties: JwtProperties) {
       None
     }
   }
+
 }
+
 
 class JwtLoginFilter(
   private val authManager: AuthenticationManager,
   private val jwtTokenFactory: JwtTokenFactory
 ) : UsernamePasswordAuthenticationFilter() {
+
   override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
     val username = obtainUsername(request)
     val password = obtainPassword(request)
@@ -111,12 +117,15 @@ class JwtLoginFilter(
     val token = jwtTokenFactory.generateTokenForUser((authResult.principal as UserDetails).username)
     response.addHeader("Authorization", "Bearer $token")
   }
+
 }
+
 
 class JwtAuthenticationFilter(
   authManager: AuthenticationManager,
   private val jwtTokenFactory: JwtTokenFactory
 ) : BasicAuthenticationFilter(authManager) {
+
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
     fun parseAuthentication(request: HttpServletRequest): Option<UsernamePasswordAuthenticationToken> {
       val token = request.getHeader("Authorization")
@@ -129,4 +138,5 @@ class JwtAuthenticationFilter(
     parseAuthentication(request).map { auth -> SecurityContextHolder.getContext().authentication = auth }
     chain.doFilter(request, response)
   }
+
 }
