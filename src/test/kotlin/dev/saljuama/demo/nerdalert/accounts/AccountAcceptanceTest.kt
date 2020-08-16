@@ -1,6 +1,6 @@
 package dev.saljuama.demo.nerdalert.accounts
 
-import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
+import dev.saljuama.demo.nerdalert.DbTestUtils
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

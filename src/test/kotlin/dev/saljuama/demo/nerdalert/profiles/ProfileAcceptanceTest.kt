@@ -1,7 +1,8 @@
 package dev.saljuama.demo.nerdalert.profiles
 
+import dev.saljuama.demo.nerdalert.DbTestUtils
+import dev.saljuama.demo.nerdalert.JwtTestUtils
 import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
-import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import org.jooq.DSLContext
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -30,6 +31,7 @@ internal class ProfileAcceptanceTest {
     DbTestUtils.createVerifiedAccount(sql, newAccount().copy(username = "Angelica"))
 
     mockMvc.put("/api/profiles/Angelica") {
+      header("Authorization", "Bearer ${JwtTestUtils.generateAuthToken("Angelica")}")
       contentType = MediaType.APPLICATION_JSON
       content = """
           {

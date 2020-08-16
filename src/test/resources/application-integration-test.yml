@@ -3,3 +3,7 @@ spring:
     url: jdbc:postgresql://localhost:5431/test
     username: test
     password: test
+
+jwt:
+  secret: "this is a very random secret that needs to be 256 bits long at least, so not sure if this is going to be long enough but we will see soon"
+  tokenTimeoutInSeconds: 108000

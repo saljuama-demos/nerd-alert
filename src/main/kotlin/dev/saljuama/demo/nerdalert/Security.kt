@@ -1,10 +1,11 @@
 package dev.saljuama.demo.nerdalert
 
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import arrow.core.*
+import io.jsonwebtoken.*
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod.GET
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -46,12 +48,14 @@ class Security(private val jwtTokenFactory: JwtTokenFactory) : WebSecurityConfig
       .csrf()
       .disable()
       .authorizeRequests()
-      .antMatchers("/api/**").permitAll()
+      .antMatchers("/api/accounts/*/verify/*").anonymous()
+      .antMatchers("/api/accounts").anonymous()
+      .antMatchers(GET, "/api/profiles/*").anonymous()
       .antMatchers("/login").permitAll()
       .anyRequest().authenticated()
       .and()
       .addFilter(JwtLoginFilter(authenticationManager(), jwtTokenFactory))
-      .addFilter(JwtAuthenticationFilter(authenticationManager()))
+      .addFilter(JwtAuthenticationFilter(authenticationManager(), jwtTokenFactory))
   }
 }
 
@@ -64,20 +68,31 @@ data class JwtProperties(
 
 @Component
 class JwtTokenFactory(private val jwtProperties: JwtProperties) {
+  val signingKey: Key = SecretKeySpec(
+    DatatypeConverter.parseBase64Binary(jwtProperties.secret),
+    SignatureAlgorithm.HS256.jcaName
+  )
+
   fun generateTokenForUser(username: String): String {
-    val signingKey: Key = SecretKeySpec(
-      DatatypeConverter.parseBase64Binary(jwtProperties.secret),
-      SignatureAlgorithm.HS256.jcaName
-    )
     val nowInMillis = System.currentTimeMillis()
     val expirationTimeInMillis = nowInMillis + (jwtProperties.tokenTimeoutInSeconds * 1000)
-
     return Jwts.builder()
-      .setIssuedAt(Date(nowInMillis))
       .setSubject(username)
+      .setIssuedAt(Date(nowInMillis))
       .setExpiration(Date(expirationTimeInMillis))
       .signWith(signingKey)
       .compact()
+  }
+
+  fun parseToken(token: String): Option<String> {
+    return try {
+      val tokenParser = Jwts.parserBuilder().setSigningKey(signingKey).build()
+      val username = tokenParser.parseClaimsJws(token).body.subject
+      Some(username)
+    } catch (e: JwtException) {
+      println("Failed to parse JWT token because ${e.message}")
+      None
+    }
   }
 }
 
@@ -98,8 +113,20 @@ class JwtLoginFilter(
   }
 }
 
-class JwtAuthenticationFilter(private val authManager: AuthenticationManager) : BasicAuthenticationFilter(authManager) {
+class JwtAuthenticationFilter(
+  authManager: AuthenticationManager,
+  private val jwtTokenFactory: JwtTokenFactory
+) : BasicAuthenticationFilter(authManager) {
   override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-    super.doFilterInternal(request, response, chain)
+    fun parseAuthentication(request: HttpServletRequest): Option<UsernamePasswordAuthenticationToken> {
+      val token = request.getHeader("Authorization")
+      if (token == null || !token.startsWith("Bearer "))
+        return None
+
+      return jwtTokenFactory.parseToken(token.replace("Bearer ", ""))
+        .map { username -> UsernamePasswordAuthenticationToken(username, null, listOf()) }
+    }
+    parseAuthentication(request).map { auth -> SecurityContextHolder.getContext().authentication = auth }
+    chain.doFilter(request, response)
   }
 }

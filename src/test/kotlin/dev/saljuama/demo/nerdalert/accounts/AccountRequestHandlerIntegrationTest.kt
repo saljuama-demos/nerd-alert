@@ -3,6 +3,7 @@ package dev.saljuama.demo.nerdalert.accounts
 import arrow.core.Left
 import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
+import dev.saljuama.demo.nerdalert.JwtTestUtils
 import io.mockk.every
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -83,20 +84,22 @@ internal class AccountRequestHandlerIntegrationTest {
   internal fun `deleting an existing account returns 204`() {
     every { accountService.deleteAccount("Pepe") } returns Right(Unit)
 
-    mockMvc.delete("/api/accounts/Pepe")
-      .andExpect {
-        status { isNoContent }
-      }
+    mockMvc.delete("/api/accounts/Pepe") {
+      header("Authorization", "Bearer ${JwtTestUtils.generateAuthToken("Pepe")}")
+    }.andExpect {
+      status { isNoContent }
+    }
   }
 
   @Test
   internal fun `deleting a non existing account returns 204`() {
     every { accountService.deleteAccount("Pepe") } returns Left(AccountNotFoundException())
 
-    mockMvc.delete("/api/accounts/Pepe")
-      .andExpect {
-        status { isNoContent }
-      }
+    mockMvc.delete("/api/accounts/Pepe") {
+      header("Authorization", "Bearer ${JwtTestUtils.generateAuthToken("Pepe")}")
+    }.andExpect {
+      status { isNoContent }
+    }
   }
 
 }

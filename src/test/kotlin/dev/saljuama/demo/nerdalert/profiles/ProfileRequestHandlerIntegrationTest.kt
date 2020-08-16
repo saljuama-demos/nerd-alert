@@ -3,6 +3,7 @@ package dev.saljuama.demo.nerdalert.profiles
 import arrow.core.Left
 import arrow.core.Right
 import com.ninjasquad.springmockk.MockkBean
+import dev.saljuama.demo.nerdalert.JwtTestUtils
 import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.defaultProfile
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -57,6 +58,7 @@ internal class ProfileRequestHandlerIntegrationTest {
       Left(ProfileNotFoundException())
 
     mockMvc.put("/api/profiles/Pepe") {
+      header("Authorization", "Bearer ${JwtTestUtils.generateAuthToken("Pepe")}")
       contentType = MediaType.APPLICATION_JSON
       content = """
           {
@@ -77,6 +79,7 @@ internal class ProfileRequestHandlerIntegrationTest {
       Right(Unit)
 
     mockMvc.put("/api/profiles/Pepe") {
+      header("Authorization", "Bearer ${JwtTestUtils.generateAuthToken("Pepe")}")
       contentType = MediaType.APPLICATION_JSON
       content = """
           {

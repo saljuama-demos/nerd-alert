@@ -1,8 +1,8 @@
 package dev.saljuama.demo.nerdalert.profiles
 
+import dev.saljuama.demo.nerdalert.DbTestUtils
 import dev.saljuama.demo.nerdalert.accounts.AccountFixtures.newAccount
 import dev.saljuama.demo.nerdalert.profiles.ProfileFixtures.profile
-import dev.saljuama.demo.nerdalert.testutils.DbTestUtils
 import dev.saljuama.demos.nerdalert.Tables.ACCOUNT
 import dev.saljuama.demos.nerdalert.Tables.USER_PROFILE
 import org.jooq.DSLContext
