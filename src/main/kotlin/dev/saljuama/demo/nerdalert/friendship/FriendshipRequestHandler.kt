@@ -1,7 +1,7 @@
 package dev.saljuama.demo.nerdalert.friendship
 
 import arrow.core.getOrHandle
-import dev.saljuama.demo.nerdalert.accounts.AccountNotFoundException
+import dev.saljuama.demo.nerdalert.profiles.ProfileNotFoundException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.function.ServerRequest
@@ -17,11 +17,11 @@ class FriendshipRequestHandler(
     val toUsername = request.pathVariable("username")
     val fromUsername = SecurityContextHolder.getContext().authentication.principal.toString()
 
-    return friendshipService.createFriendshipRequest(toUsername, fromUsername)
+    return friendshipService.sendFriendshipRequest(toUsername, fromUsername)
       .map { ServerResponse.status(201).build() }
       .getOrHandle { error ->
         when (error) {
-          is AccountNotFoundException -> ServerResponse.badRequest().build()
+          is ProfileNotFoundException -> ServerResponse.badRequest().build()
           else -> ServerResponse.status(500).build()
         }
       }
