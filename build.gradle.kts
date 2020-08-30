@@ -1,21 +1,65 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jooq.meta.jaxb.ForcedType
 
 plugins {
-  id("org.springframework.boot") version "2.3.2.RELEASE"
-  id("io.spring.dependency-management") version "1.0.9.RELEASE"
-  id("nu.studer.jooq") version "4.2"
-  id("org.flywaydb.flyway") version "6.5.1"
-  kotlin("jvm") version "1.3.72"
-  kotlin("plugin.spring") version "1.3.72"
-  kotlin("kapt") version "1.3.72"
+  id("org.springframework.boot") version "2.3.3.RELEASE"
+  id("io.spring.dependency-management") version "1.0.10.RELEASE"
+  id("nu.studer.jooq") version "5.0.1"
+  id("org.flywaydb.flyway") version "6.5.5"
+  kotlin("jvm") version "1.4.0"
+  kotlin("plugin.spring") version "1.4.0"
+  kotlin("kapt") version "1.4.0"
 }
 
 group = "dev.saljuama.demo"
 version = "0.0.1"
-java.sourceCompatibility = JavaVersion.VERSION_11
 
-apply(from = "gradle/jooq.gradle")
-apply(from = "gradle/flyway.gradle")
+flyway {
+  url = "jdbc:postgresql://localhost:5432/demo"
+  user = "demo"
+  password = "demo"
+  schemas = arrayOf("public")
+}
+
+jooq {
+  configurations {
+    create("main") {
+      jooqConfiguration.apply {
+        logging = org.jooq.meta.jaxb.Logging.WARN
+        jdbc.apply {
+          driver = "org.postgresql.Driver"
+          url = "jdbc:postgresql://localhost:5432/demo"
+          user = "demo"
+          password = "demo"
+        }
+        generator.apply {
+          name = "org.jooq.codegen.DefaultGenerator"
+          strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+          database.apply {
+            name = "org.jooq.meta.postgres.PostgresDatabase"
+            inputSchema = "public"
+            excludes = "flyway_schema_history"
+            forcedTypes.addAll(arrayOf(
+              ForcedType().withName("varchar").withIncludeExpression(".*").withIncludeTypes("JSONB?"),
+              ForcedType().withName("varchar").withIncludeExpression(".*").withIncludeTypes("INET")
+            ).toList())
+          }
+          generate.apply {
+            isRelations = true
+            isDeprecated = false
+            isRecords = true
+            isImmutablePojos = true
+            isFluentSetters = true
+          }
+          target.apply {
+            packageName = "dev.saljuama.demo.nerdalert"
+            directory = "src/main/generated"
+          }
+        }
+      }
+    }
+  }
+}
 
 configurations {
   compileOnly {
@@ -51,7 +95,7 @@ dependencies {
 
   annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
   runtimeOnly("org.postgresql:postgresql")
-  jooqRuntime("org.postgresql:postgresql")
+  jooqGenerator("org.postgresql:postgresql")
   kapt("io.arrow-kt:arrow-meta:${Versions.arrow}")
 
   testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -67,6 +111,7 @@ tasks.withType<Test> {
   useJUnitPlatform()
 }
 
+java.sourceCompatibility = JavaVersion.VERSION_11
 tasks.withType<KotlinCompile> {
   kotlinOptions {
     freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -75,6 +120,6 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.wrapper {
-  gradleVersion = "6.5.1"
+  gradleVersion = "6.6"
   distributionType = Wrapper.DistributionType.ALL
 }

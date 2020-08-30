@@ -1,6 +1,0 @@
-flyway {
-    url = 'jdbc:postgresql://localhost:5432/demo'
-    user = 'demo'
-    password = 'demo'
-    schemas = ['public']
-}
